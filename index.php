@@ -1682,7 +1682,8 @@ $slider_list = db()->fetchAll("SELECT * FROM slider WHERE status = 1 ORDER BY ur
                         </span>
                         <span class="izin-badge" style="width: fit-content;">
                             <i class="bi bi-award-fill"></i>
-                            NIB : -
+                            NIB :
+                                <?= htmlspecialchars($settings['no_nib'] ?? '1234567890123') ?>
                         </span>
                     </div>
                 </div>
