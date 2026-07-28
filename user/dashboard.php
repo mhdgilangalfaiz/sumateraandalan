@@ -76,6 +76,29 @@ $totalProses = count(array_filter($bookings, fn($b) => in_array($b['status'], ['
             color: var(--emas);
         }
 
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-logo {
+            height: 58px;
+            width: auto;
+            display: block;
+        }
+
+        @media (max-width: 991px) {
+            .navbar-logo {
+                height: 50px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar-logo {
+                height: 42px;
+            }
+        }
+
         .nav-link {
             color: rgba(255, 255, 255, .9) !important;
             font-size: .88rem;
@@ -158,8 +181,8 @@ $totalProses = count(array_filter($bookings, fn($b) => in_array($b['status'], ['
 <body>
     <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand" href="<?= BASE_URL ?>/index.php"><i
-                    class="bi bi-moon-stars-fill me-2" style="color: var(--emas)"></i>SAH <span>Travel</span></a>
+            <a class="navbar-brand" href="<?= BASE_URL ?>/index.php"><img
+        src="<?= BASE_URL ?>/assets/img/logo-sah.png" alt="Logo SAH Umrah" class="navbar-logo me-2">SAH <span>Umrah</span></a>
             <div class="d-flex gap-3 align-items-center">
                 <a href="<?= BASE_URL ?>/pages/paket.php" class="nav-link">Paket Umrah</a>
                 <a href="<?= BASE_URL ?>/pages/cek-booking.php" class="nav-link">Cek Booking</a>

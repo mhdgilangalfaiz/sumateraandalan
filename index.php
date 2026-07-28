@@ -86,6 +86,9 @@ $slider_list = db()->fetchAll("SELECT * FROM slider WHERE status = 1 ORDER BY ur
             width: 100%;
             top: 0;
             z-index: 1000;
+            opacity: 0;
+            transform: translateY(-100%);
+            pointer-events: none;
         }
 
         .navbar.scrolled {
@@ -93,6 +96,9 @@ $slider_list = db()->fetchAll("SELECT * FROM slider WHERE status = 1 ORDER BY ur
             backdrop-filter: blur(10px);
             padding: 0.8rem 0;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
         }
 
         .navbar-brand {
@@ -105,6 +111,29 @@ $slider_list = db()->fetchAll("SELECT * FROM slider WHERE status = 1 ORDER BY ur
 
         .navbar-brand span {
             color: var(--emas);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-logo {
+            height: 58px;
+            width: auto;
+            display: block;
+        }
+
+        @media (max-width: 991px) {
+            .navbar-logo {
+                height: 50px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar-logo {
+                height: 42px;
+            }
         }
 
         .nav-link {
@@ -1093,8 +1122,8 @@ $slider_list = db()->fetchAll("SELECT * FROM slider WHERE status = 1 ORDER BY ur
     <nav class="navbar navbar-expand-lg" id="mainNav">
         <div class="container">
             <a class="navbar-brand" href="index.php">
-                <i class="bi bi-moon-stars-fill me-2" style="color: var(--emas)"></i>
-                SAH <span>Travel</span>
+                <img src="<?= BASE_URL ?>/assets/img/logo-sah.png" alt="Logo SAH Umrah" class="navbar-logo me-2">
+                SAH <span>Umrah</span>
             </a>
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
                 <i class="bi bi-list text-white fs-4"></i>

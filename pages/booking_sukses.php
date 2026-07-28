@@ -79,6 +79,29 @@ $waMsg = 'Assalamu\'alaikum, saya telah mendaftar paket umrah dengan kode bookin
             color: var(--emas)
         }
 
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-logo {
+            height: 58px;
+            width: auto;
+            display: block;
+        }
+
+        @media (max-width: 991px) {
+            .navbar-logo {
+                height: 50px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar-logo {
+                height: 42px;
+            }
+        }
+
         .sukses-wrap {
             max-width: 680px;
             margin: 60px auto;
@@ -239,7 +262,7 @@ $waMsg = 'Assalamu\'alaikum, saya telah mendaftar paket umrah dengan kode bookin
     <nav class="navbar">
         <div class="container">
             <a class="navbar-brand" href="../index.php">
-                <i class="bi bi-moon-stars-fill me-2" style="color:var(--emas)"></i>SAH <span>Travel</span>
+                <img src="<?= BASE_URL ?>/assets/img/logo-sah.png" alt="Logo SAH Umrah" class="navbar-logo me-2">SAH <span>Umrah</span>
             </a>
         </div>
     </nav>

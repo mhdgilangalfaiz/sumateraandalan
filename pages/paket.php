@@ -101,6 +101,29 @@ foreach (db()->fetchAll("SELECT nama_key, nilai FROM pengaturan") as $p)
             color: var(--emas)
         }
 
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-logo {
+            height: 58px;
+            width: auto;
+            display: block;
+        }
+
+        @media (max-width: 991px) {
+            .navbar-logo {
+                height: 50px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar-logo {
+                height: 42px;
+            }
+        }
+
         .nav-link {
             color: rgba(255, 255, 255, .9) !important;
             font-weight: 500;
@@ -505,8 +528,9 @@ foreach (db()->fetchAll("SELECT nama_key, nilai FROM pengaturan") as $p)
 
     <nav class="navbar navbar-expand-lg sticky-top" id="mainNav">
         <div class="container">
-            <a class="navbar-brand" href="../index.php"><i class="bi bi-moon-stars-fill me-2"
-                    style="color:var(--emas)"></i>SAH <span>Travel</span></a>
+            <a class="navbar-brand" href="../index.php"><img
+                src="<?= BASE_URL ?>/assets/img/logo-sah.png" alt="Logo SAH Umrah" class="navbar-logo me-2">SAH
+            <span>Umrah</span></a>
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
                 <i class="bi bi-list text-white fs-4"></i>
             </button>
