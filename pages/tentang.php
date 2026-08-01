@@ -460,6 +460,12 @@ $izin_ppiu = $settings['izin_ppiu'] ?? '91201032614170001';
                     <li class="nav-item"><a class="nav-link" href="paket.php">Paket Umrah</a></li>
                     <li class="nav-item"><a class="nav-link active" href="tentang.php">Tentang Kami</a></li>
                     <li class="nav-item"><a class="nav-link" href="kontak.php">Kontak</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cek-booking.php">Cek Booking</a></li>
+                    <li class="nav-item ms-2">
+                        <a class="nav-link btn-navbar" href="paket.php">
+                            <i class="bi bi-calendar-check me-1"></i>Daftar Sekarang
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>

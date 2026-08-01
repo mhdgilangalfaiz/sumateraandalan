@@ -2,16 +2,12 @@
 // ============================================================
 // includes/auth.php — FIXED VERSION
 // ============================================================
-// CATATAN: isLoggedIn() & isAdminLoggedIn() HANYA di sini,
+// CATATAN: Sistem akun untuk user/jamaah sudah dihapus.
+// Booking sekarang sepenuhnya guest-checkout (tanpa login),
+// status booking dicek lewat pages/cek-booking.php.
+// Fungsi login di sini HANYA untuk admin.
+// isAdminLoggedIn() HANYA didefinisikan di sini,
 // tidak boleh didefinisikan lagi di config.php
-
-/**
- * Cek apakah user sudah login
- */
-function isLoggedIn(): bool
-{
-    return !empty($_SESSION['user_id']);
-}
 
 /**
  * Cek apakah admin sudah login
@@ -19,18 +15,6 @@ function isLoggedIn(): bool
 function isAdminLoggedIn(): bool
 {
     return !empty($_SESSION['admin_id']);
-}
-
-/**
- * Paksa user login (redirect ke login jika belum)
- */
-function requireLogin(string $redirectTo = ''): void
-{
-    if (!isLoggedIn()) {
-        $url = BASE_URL . '/pages/login.php';
-        if ($redirectTo) $url .= '?redirect=' . urlencode($redirectTo);
-        redirect($url);
-    }
 }
 
 /**
@@ -69,23 +53,6 @@ function loginAdmin(array $admin): void
 }
 
 /**
- * Login user biasa
- */
-function loginUser(array $user): void
-{
-    $_SESSION['user_id']    = $user['id'];
-    $_SESSION['user_name']  = $user['nama_lengkap'];
-    $_SESSION['user_email'] = $user['email'];
-    $_SESSION['user_role']  = 'user';
-
-    db()->execute(
-        "UPDATE users SET last_login = NOW() WHERE id = ?",
-        'i',
-        [$user['id']]
-    );
-}
-
-/**
  * Logout (hapus semua session)
  */
 function logout(): void
@@ -104,19 +71,6 @@ function currentAdmin(): array|null
         "SELECT * FROM admins WHERE id = ?",
         'i',
         [$_SESSION['admin_id']]
-    );
-}
-
-/**
- * Ambil data user yang sedang login
- */
-function currentUser(): array|null
-{
-    if (!isLoggedIn()) return null;
-    return db()->fetchOne(
-        "SELECT * FROM users WHERE id = ?",
-        'i',
-        [$_SESSION['user_id']]
     );
 }
 

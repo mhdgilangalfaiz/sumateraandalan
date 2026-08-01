@@ -10,30 +10,40 @@ $booking = null;
 $pembayaran = [];
 $error = '';
 $kode_input = strtoupper(sanitize($_GET['kode'] ?? $_POST['kode'] ?? ''));
+$kontak_input = trim(sanitize($_GET['kontak'] ?? $_POST['kontak'] ?? ''));
+$sudahCari = $kode_input !== '' || $kontak_input !== '';
 
-if ($kode_input) {
-  // Pakai format mysqli: ('s', [$param])
-  $booking = db()->fetchOne(
-    "SELECT b.*, pu.nama_paket, pu.durasi, pu.maskapai,
-                pu.hotel_mekkah, pu.bintang_mekkah,
-                pu.hotel_madinah, pu.bintang_madinah,
-                j.tanggal_berangkat, j.tanggal_pulang
-         FROM booking b
-         LEFT JOIN paket_umrah pu ON b.paket_id = pu.id
-         LEFT JOIN jadwal j ON b.jadwal_id = j.id
-         WHERE b.kode_booking = ?",
-    's',
-    [$kode_input]
-  );
-
-  if (!$booking) {
-    $error = 'Kode booking tidak ditemukan. Pastikan kode yang Anda masukkan sudah benar.';
+if ($sudahCari) {
+  if ($kode_input === '' || $kontak_input === '') {
+    $error = 'Mohon isi kode booking dan email/no. HP yang digunakan saat mendaftar.';
   } else {
-    $pembayaran = db()->fetchAll(
-      "SELECT * FROM pembayaran WHERE booking_id = ? ORDER BY created_at DESC",
-      'i',
-      [$booking['id']]
+    // Verifikasi ganda: kode booking HARUS cocok dengan email ATAU telepon
+    // pemilik booking. Ini mencegah orang menebak-nebak kode booking secara
+    // berurutan untuk melihat data booking milik orang lain.
+    $booking = db()->fetchOne(
+      "SELECT b.*, pu.nama_paket, pu.durasi, pu.maskapai,
+                  pu.hotel_mekkah, pu.bintang_mekkah,
+                  pu.hotel_madinah, pu.bintang_madinah,
+                  j.tanggal_berangkat, j.tanggal_pulang
+           FROM booking b
+           LEFT JOIN paket_umrah pu ON b.paket_id = pu.id
+           LEFT JOIN jadwal j ON b.jadwal_id = j.id
+           WHERE b.kode_booking = ? AND (b.email = ? OR b.telepon = ?)",
+      'sss',
+      [$kode_input, $kontak_input, $kontak_input]
     );
+
+    if (!$booking) {
+      // Pesan sengaja umum (tidak bilang "kode salah" atau "kontak salah"
+      // secara spesifik) supaya tidak membantu orang menebak kombinasi yang benar.
+      $error = 'Data tidak ditemukan. Pastikan kode booking dan email/no. HP sesuai dengan saat pendaftaran.';
+    } else {
+      $pembayaran = db()->fetchAll(
+        "SELECT * FROM pembayaran WHERE booking_id = ? ORDER BY created_at DESC",
+        'i',
+        [$booking['id']]
+      );
+    }
   }
 }
 
@@ -105,7 +115,7 @@ $status_step = [
     .navbar {
       background: rgba(27, 77, 46, .97);
       backdrop-filter: blur(10px);
-      padding: .85rem 0;
+      padding: .8rem 0;
       box-shadow: 0 4px 30px rgba(0, 0, 0, .2);
     }
 
@@ -162,56 +172,57 @@ $status_step = [
       font-weight: 600;
     }
 
-    /* PAGE HEADER */
-    .page-header {
+    /* PAGE HERO (standar — sama dengan halaman lain) */
+    .page-hero {
       background: linear-gradient(135deg, #0D2B1A, #1B4D2E 50%, #1B6B3A);
-      padding: 80px 0 55px;
+      padding: 120px 0 60px;
       position: relative;
       overflow: hidden;
     }
 
-    .page-header::before {
+    @media (max-width: 767px) {
+      .page-hero {
+        padding: 70px 0 30px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page-hero {
+        padding: 20px 0 20px;
+      }
+    }
+
+    .page-hero::before {
       content: '';
       position: absolute;
       inset: 0;
       opacity: .05;
-      background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23C9A84C'%3E%3Cpath d='M40 0L53 27H80L57 44L66 71L40 54L14 71L23 44L0 27H27L40 0Z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23C9A84C' fill-opacity='1'%3E%3Cpath d='M30 0L39 20.5H60L42.5 33.2L49.5 53.5L30 40.5L10.5 53.5L17.5 33.2L0 20.5H21L30 0Z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     }
 
-    .page-header-content {
-      position: relative;
-      z-index: 2;
-    }
-
-    .page-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--emas-muda);
-      font-size: .8rem;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin-bottom: .8rem;
-    }
-
-    .page-title {
+    .page-hero-title {
       font-family: var(--font-display);
-      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
       font-weight: 700;
       color: #fff;
-      margin: 0;
+    }
+
+    .page-hero-title span {
+      color: var(--emas);
+    }
+
+    .page-hero-sub {
+      color: rgba(255, 255, 255, .7);
+      font-size: 1rem;
     }
 
     .breadcrumb-item a {
       color: var(--emas-muda);
       text-decoration: none;
-      font-size: .85rem;
     }
 
     .breadcrumb-item.active {
       color: rgba(255, 255, 255, .6);
-      font-size: .85rem;
     }
 
     .breadcrumb-item+.breadcrumb-item::before {
@@ -258,6 +269,10 @@ $status_step = [
       font-family: var(--font-body);
       transition: border-color .2s;
       text-transform: uppercase;
+    }
+
+    .search-input-kontak {
+      text-transform: none;
     }
 
     .search-input:focus {
@@ -603,9 +618,11 @@ $status_step = [
       </button>
       <div class="collapse navbar-collapse" id="navMenu">
         <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
+          <li class="nav-item"><a class="nav-link" href="../index.php">Home</a></li>
           <li class="nav-item"><a class="nav-link" href="paket.php">Paket Umrah</a></li>
+          <li class="nav-item"><a class="nav-link" href="tentang.php">Tentang Kami</a></li>
+          <li class="nav-item"><a class="nav-link" href="kontak.php">Kontak</a></li>
           <li class="nav-item"><a class="nav-link active" href="cek-booking.php">Cek Booking</a></li>
-          <li class="nav-item"><a class="nav-link" href="../index.php#kontak">Kontak</a></li>
           <li class="nav-item ms-2">
             <a class="nav-link btn-navbar" href="paket.php">
               <i class="bi bi-calendar-check me-1"></i>Daftar Sekarang
@@ -616,17 +633,17 @@ $status_step = [
     </div>
   </nav>
 
-  <!-- PAGE HEADER -->
-  <section class="page-header">
-    <div class="container page-header-content">
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="container">
       <nav aria-label="breadcrumb" class="mb-3">
-        <ol class="breadcrumb mb-0">
-          <li class="breadcrumb-item"><a href="../index.php"><i class="bi bi-house me-1"></i>Home</a></li>
+        <ol class="breadcrumb mb-0" style="font-size:.83rem">
+          <li class="breadcrumb-item"><a href="../index.php">Home</a></li>
           <li class="breadcrumb-item active">Cek Status Booking</li>
         </ol>
       </nav>
-      <div class="page-label"><i class="bi bi-search"></i> Lacak Pendaftaran</div>
-      <h1 class="page-title">Cek Status Booking Umrah</h1>
+      <h1 class="page-hero-title">Cek Status <span>Booking</span> Umrah</h1>
+      <p class="page-hero-sub">Masukkan kode booking dan email/no. HP Anda untuk melihat status pendaftaran terkini</p>
     </div>
   </section>
 
@@ -638,12 +655,15 @@ $status_step = [
           <i class="bi bi-ticket-detailed-fill me-2" style="color:var(--emas)"></i>Masukkan Kode Booking
         </div>
         <div class="search-desc">
-          Kode booking Anda didapat setelah pendaftaran selesai. Format: <strong>SAH-2026-0001</strong>
+          Kode booking Anda didapat setelah pendaftaran selesai. Format: <strong>SAH-2026-0001</strong>.
+          Untuk keamanan data Anda, mohon isi juga email atau no. HP yang digunakan saat mendaftar.
         </div>
         <form method="GET" action="">
-          <div class="search-group">
-            <input type="text" name="kode" class="search-input" placeholder="Contoh: SAH-2026-0001"
-              value="<?= htmlspecialchars($kode_input) ?>">
+          <div class="search-group" style="flex-direction:column;align-items:stretch;gap:12px">
+            <input type="text" name="kode" class="search-input" placeholder="Kode Booking, contoh: SAH-2026-0001"
+              value="<?= htmlspecialchars($kode_input) ?>" required>
+            <input type="text" name="kontak" class="search-input search-input-kontak" placeholder="Email atau No. HP saat mendaftar"
+              value="<?= htmlspecialchars($kontak_input) ?>" required>
             <button type="submit" class="btn-search">
               <i class="bi bi-search"></i> Cek Status
             </button>

@@ -189,6 +189,30 @@ $waMsg = 'Assalamu\'alaikum, saya telah mendaftar paket umrah dengan kode bookin
             color: #333
         }
 
+        .btn-cek {
+            background: linear-gradient(135deg, var(--hijau-tua), var(--hijau));
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: .8rem 2rem;
+            font-size: .95rem;
+            font-weight: 700;
+            width: 100%;
+            transition: all .3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            margin-bottom: .8rem
+        }
+
+        .btn-cek:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(27, 77, 46, .3)
+        }
+
         .btn-wa {
             background: #25D366;
             color: #fff;
@@ -343,6 +367,9 @@ $waMsg = 'Assalamu\'alaikum, saya telah mendaftar paket umrah dengan kode bookin
                 informasi pembayaran DP.
             </div>
 
+            <a href="cek-booking.php?kode=<?= urlencode($booking['kode_booking']) ?>" class="btn-cek">
+                <i class="bi bi-search"></i> Cek Status Booking Saya
+            </a>
             <a href="https://wa.me/<?= $waNo ?>?text=<?= urlencode($waMsg) ?>" target="_blank" class="btn-wa">
                 <i class="bi bi-whatsapp"></i> Konfirmasi via WhatsApp
             </a>

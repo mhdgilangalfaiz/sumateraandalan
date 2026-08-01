@@ -98,6 +98,21 @@ $email = $settings['email'] ?? 'info@sahtravel.com';
             transition: color .3s
         }
 
+        .btn-navbar {
+            background: var(--emas);
+            color: var(--hijau-tua) !important;
+            border-radius: 50px;
+            padding: .5rem 1.4rem !important;
+            font-weight: 600;
+            font-size: .85rem;
+            transition: all .3s
+        }
+
+        .btn-navbar:hover {
+            background: var(--emas-muda);
+            transform: translateY(-1px)
+        }
+
         .nav-link:hover,
         .nav-link.active {
             color: var(--emas) !important
@@ -408,6 +423,12 @@ $email = $settings['email'] ?? 'info@sahtravel.com';
                     <li class="nav-item"><a class="nav-link" href="paket.php">Paket Umrah</a></li>
                     <li class="nav-item"><a class="nav-link" href="tentang.php">Tentang Kami</a></li>
                     <li class="nav-item"><a class="nav-link active" href="kontak.php">Kontak</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cek-booking.php">Cek Booking</a></li>
+                    <li class="nav-item ms-2">
+                        <a class="nav-link btn-navbar" href="paket.php">
+                            <i class="bi bi-calendar-check me-1"></i>Daftar Sekarang
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>

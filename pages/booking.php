@@ -146,6 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       --hijau-tua: #1B4D2E;
       --hijau: #1B6B3A;
       --emas: #C9A84C;
+      --emas-muda: #E8C97A;
       --krem: #F9F5EE;
       --font-display: 'Playfair Display', serif;
       --font-body: 'DM Sans', sans-serif
@@ -162,12 +163,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     .navbar {
       background: rgba(27, 77, 46, .97);
-      padding: .8rem 0
+      backdrop-filter: blur(10px);
+      padding: .8rem 0;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, .2)
     }
 
     .navbar-brand {
       font-family: var(--font-display);
-      font-size: 1.3rem;
+      font-size: 1.4rem;
       font-weight: 700;
       color: #fff !important
     }
@@ -206,6 +209,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     .nav-link:hover {
       color: var(--emas) !important
+    }
+
+    .btn-navbar {
+      background: var(--emas);
+      color: var(--hijau-tua) !important;
+      border-radius: 50px;
+      padding: .5rem 1.4rem !important;
+      font-weight: 600;
+      font-size: .85rem;
+      transition: all .3s
+    }
+
+    .btn-navbar:hover {
+      background: var(--emas-muda);
+      transform: translateY(-1px)
     }
 
     .page-hero {
@@ -449,14 +467,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
 
-  <nav class="navbar navbar-expand-lg sticky-top">
+  <nav class="navbar navbar-expand-lg sticky-top" id="mainNav">
     <div class="container">
       <a class="navbar-brand" href="../index.php"><img
         src="<?= BASE_URL ?>/assets/img/logo-sah.png" alt="Logo SAH Umrah" class="navbar-logo me-2">SAH
       <span>Umrah</span></a>
-      <div class="ms-auto d-flex align-items-center gap-3">
-        <a href="paket.php" class="nav-link"><i class="bi bi-grid me-1"></i>Paket Umrah</a>
-        <a href="../index.php#kontak" class="nav-link"><i class="bi bi-telephone me-1"></i>Kontak</a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <i class="bi bi-list text-white fs-4"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
+          <li class="nav-item"><a class="nav-link" href="../index.php">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="paket.php">Paket Umrah</a></li>
+          <li class="nav-item"><a class="nav-link" href="tentang.php">Tentang Kami</a></li>
+          <li class="nav-item"><a class="nav-link" href="kontak.php">Kontak</a></li>
+          <li class="nav-item"><a class="nav-link" href="cek-booking.php">Cek Booking</a></li>
+          <li class="nav-item ms-2">
+            <a class="nav-link btn-navbar" href="paket.php">
+              <i class="bi bi-calendar-check me-1"></i>Daftar Sekarang
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
   </nav>

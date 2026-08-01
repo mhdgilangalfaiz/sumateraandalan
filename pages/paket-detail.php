@@ -461,13 +461,12 @@ foreach (db()->fetchAll("SELECT nama_key, nilai FROM pengaturan") as $p)
                     <li class="nav-item"><a class="nav-link active" href="paket.php">Paket Umrah</a></li>
                     <li class="nav-item"><a class="nav-link" href="tentang.php">Tentang Kami</a></li>
                     <li class="nav-item"><a class="nav-link" href="kontak.php">Kontak</a></li>
-                    <?php if (isLoggedIn()): ?>
-                        <li class="nav-item ms-2"><a class="nav-link btn-navbar" href="../user/dashboard.php"><i
-                                    class="bi bi-person-circle me-1"></i>
-                                <?= htmlspecialchars($_SESSION['user_name']) ?>
-                            </a></li>
-                    <?php else: ?>
-                    <?php endif; ?>
+                    <li class="nav-item"><a class="nav-link" href="cek-booking.php">Cek Booking</a></li>
+                    <li class="nav-item ms-2">
+                        <a class="nav-link btn-navbar" href="paket.php">
+                            <i class="bi bi-calendar-check me-1"></i>Daftar Sekarang
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>

@@ -1135,6 +1135,7 @@ $slider_list = db()->fetchAll("SELECT * FROM slider WHERE status = 1 ORDER BY ur
                     <li class="nav-item"><a class="nav-link" href="#testimoni">Testimoni</a></li>
                     <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
                     <li class="nav-item"><a class="nav-link" href="#kontak">Kontak</a></li>
+                    <li class="nav-item"><a class="nav-link" href="pages/cek-booking.php">Cek Booking</a></li>
                     <li class="nav-item ms-2">
                         <a class="nav-link btn-navbar" href="pages/booking.php">
                             <i class="bi bi-calendar-check me-1"></i>Daftar Sekarang
