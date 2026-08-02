@@ -204,7 +204,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     .nav-link {
       color: rgba(255, 255, 255, .9) !important;
-      font-size: .88rem
+      font-weight: 500;
+      font-size: .9rem;
+      padding: .5rem 1rem !important;
+      transition: color .3s
     }
 
     .nav-link:hover {

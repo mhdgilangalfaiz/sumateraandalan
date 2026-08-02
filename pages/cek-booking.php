@@ -154,22 +154,31 @@ $status_step = [
     }
 
     .nav-link {
-      color: rgba(255, 255, 255, .85) !important;
+      color: rgba(255, 255, 255, .9) !important;
       font-weight: 500;
       font-size: .9rem;
-      transition: color .3s;
+      padding: .5rem 1rem !important;
+      transition: color .3s
     }
 
-    .nav-link:hover {
-      color: var(--emas) !important;
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--emas) !important
     }
 
     .btn-navbar {
       background: var(--emas);
       color: var(--hijau-tua) !important;
       border-radius: 50px;
-      padding: .45rem 1.4rem !important;
+      padding: .5rem 1.4rem !important;
       font-weight: 600;
+      font-size: .85rem;
+      transition: all .3s
+    }
+
+    .btn-navbar:hover {
+      background: var(--emas-muda);
+      transform: translateY(-1px)
     }
 
     /* PAGE HERO (standar — sama dengan halaman lain) */

@@ -133,7 +133,8 @@ foreach (db()->fetchAll("SELECT nama_key, nilai FROM pengaturan") as $p)
             border-radius: 50px;
             padding: .5rem 1.4rem !important;
             font-weight: 600;
-            font-size: .85rem
+            font-size: .85rem;
+            transition: all .3s
         }
 
         /* HERO */
