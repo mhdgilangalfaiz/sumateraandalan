@@ -306,33 +306,9 @@
     color: #1a1a1a;
   }
 
-  /* ROLE INDICATOR — perbedaan visual Staff Admin vs Superadmin */
-  .sidebar.role-superadmin {
-    background: linear-gradient(180deg, #2E1A47 0%, #4C2E7A 100%);
-  }
-
-  .sidebar.role-superadmin .nav-link-item.active {
-    background: linear-gradient(135deg, rgba(168, 130, 234, .28), rgba(168, 130, 234, .1));
-    color: #D9C6FA;
-    border: 1px solid rgba(168, 130, 234, .25);
-  }
-
-  .sidebar.role-superadmin .nav-link-item.active i {
-    color: #B794F6;
-  }
-
-  .sidebar.role-superadmin .brand-icon {
-    background: linear-gradient(135deg, #A882EA, #D9C6FA);
-    color: #2E1A47;
-  }
-
-  .sidebar.role-superadmin .brand-name span {
-    color: #B794F6;
-  }
-
-  .sidebar.role-superadmin .admin-ava {
-    background: linear-gradient(135deg, #6B46C1, #A882EA);
-  }
+  /* ROLE INDICATOR — dulu sidebar superadmin dibuat ungu, sekarang
+     dikembalikan konsisten hijau. Pembeda admin vs superadmin sekarang
+     ada di ISI dashboard-nya, bukan warna. */
 
   .role-tag {
     display: inline-flex;
@@ -354,13 +330,9 @@
   }
 
   .role-tag.superadmin {
-    background: rgba(168, 130, 234, .2);
-    color: #D9C6FA;
-    border: 1px solid rgba(168, 130, 234, .35);
-  }
-
-  .topbar.role-superadmin {
-    border-bottom: 2px solid #A882EA;
+    background: rgba(27, 107, 58, .18);
+    color: #8FD9AE;
+    border: 1px solid rgba(46, 139, 87, .35);
   }
 
   .topbar-role-badge {

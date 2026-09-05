@@ -39,6 +39,39 @@ $bayar_pending = db()->fetchAll("
 $adminNama = $_SESSION['admin_nama'] ?? 'Admin';
 $adminRole = $_SESSION['admin_role'] ?? 'admin';
 $pageTitle = 'Dashboard';
+
+// ── DATA KHUSUS SUPERADMIN (rekap read-only per layanan) ─────
+$rekapVisa = null;
+$rekapStaff = null;
+if (isSuperadmin()) {
+    $rekapVisa = db()->fetchOne(
+        "SELECT
+            COUNT(*) AS total,
+            SUM(status IN ('dokumen_belum_lengkap','dokumen_lengkap','menunggu_pembayaran','submitted','in_process','perlu_revisi')) AS proses,
+            SUM(status = 'approved') AS approved,
+            SUM(status = 'rejected') AS rejected
+         FROM visa_applications",
+        '',
+        []
+    );
+
+    $rekapStaff = db()->fetchOne(
+        "SELECT
+            COUNT(*) AS total,
+            SUM(status = 1) AS aktif,
+            SUM(role = 'admin' AND status = 1) AS admin_aktif,
+            SUM(role = 'superadmin' AND status = 1) AS superadmin_aktif
+         FROM admins",
+        '',
+        []
+    );
+
+    $daftarStaff = db()->fetchAll(
+        "SELECT id, nama, role, status, last_login, last_activity FROM admins ORDER BY status DESC, last_activity DESC LIMIT 6",
+        '',
+        []
+    );
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -602,7 +635,7 @@ $pageTitle = 'Dashboard';
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
             <div>
               <h2>Assalamu'alaikum, <?= htmlspecialchars(explode(' ', $adminNama)[0]) ?></h2>
-              <p>Berikut ringkasan aktivitas SAH Travel hari ini</p>
+              <p><?= isSuperadmin() ? 'Ringkasan bisnis SAH Travel — akun Anda khusus untuk melihat rekap' : 'Berikut ringkasan aktivitas SAH Travel hari ini' ?></p>
             </div>
             <div style="text-align:right">
               <div style="font-size:.72rem;color:rgba(255,255,255,.4);margin-bottom:2px">Paket Aktif</div>
@@ -679,143 +712,303 @@ $pageTitle = 'Dashboard';
         </div>
       </div>
 
-      <!-- CONTENT GRID -->
-      <div class="content-grid">
+      <?php if (isSuperadmin()): ?>
+        <!-- ============ TAMPILAN SUPERADMIN: REKAP READ-ONLY ============ -->
+        <div class="content-grid" style="grid-template-columns:1fr">
 
-        <!-- BOOKING TERBARU -->
-        <div class="card-box">
-          <div class="card-head">
-            <div class="card-head-title">
-              <div class="card-head-icon green"><i class="bi bi-calendar-check-fill"></i></div>
-              Booking Terbaru
-            </div>
-            <a href="booking.php" class="card-link">Lihat semua <i class="bi bi-arrow-right"></i></a>
-          </div>
-          <?php if (!empty($bookings)): ?>
-            <div style="overflow-x:auto">
-              <table class="tbl">
-                <thead>
-                  <tr>
-                    <th>Kode</th>
-                    <th>Nama Pemesan</th>
-                    <th>Paket</th>
-                    <th>Total</th>
-                    <th>Status</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <?php foreach ($bookings as $b):
-                    // Ambil nama dari data_jamaah (karena tidak ada kolom nama_pemesan)
-                    $namaP = 'Tamu';
-                    if (!empty($b['data_jamaah'])) {
-                      $dj = json_decode($b['data_jamaah'], true);
-                      $namaP = $dj[0]['nama'] ?? 'Tamu';
-                    }
-                    $telpP = '';
-                    if (!empty($b['data_jamaah'])) {
-                      $dj = json_decode($b['data_jamaah'], true);
-                      $telpP = $dj[0]['telepon'] ?? '';
-                    }
-                    ?>
-                    <tr>
-                      <td><span class="kode"><?= htmlspecialchars($b['kode_booking']) ?></span></td>
-                      <td>
-                        <div class="nama-cell">
-                          <div class="nama"><?= htmlspecialchars($namaP) ?></div>
-                          <div class="sub"><?= $b['jumlah_jamaah'] ?> jamaah &middot;
-                            <?= tglIndo(date('Y-m-d', strtotime($b['created_at']))) ?>
-                          </div>
-                        </div>
-                      </td>
-                      <td style="font-size:.8rem;color:#64748b">
-                        <?= htmlspecialchars(mb_strimwidth($b['nama_paket'] ?? '-', 0, 25, '…')) ?>
-                      </td>
-                      <td><span class="price">Rp <?= number_format($b['total_harga'], 0, ',', '.') ?></span></td>
-                      <td><?= statusBadge($b['status']) ?></td>
-                      <td><a href="booking-detail.php?id=<?= $b['id'] ?>"
-                          style="color:var(--hijau);font-size:.78rem;text-decoration:none;font-weight:600;white-space:nowrap">Detail
-                          →</a></td>
-                    </tr>
-                  <?php endforeach; ?>
-                </tbody>
-              </table>
-            </div>
-          <?php else: ?>
-            <div class="empty-state-sm"><i class="bi bi-calendar-x"></i>Belum ada data booking</div>
-          <?php endif; ?>
-        </div>
-
-        <!-- SIDE -->
-        <div class="side-stack">
-
-          <!-- QUICK ACTIONS -->
           <div class="card-box">
             <div class="card-head">
               <div class="card-head-title">
-                <div class="card-head-icon gold"><i class="bi bi-lightning-charge-fill"></i></div>Aksi Cepat
+                <div class="card-head-icon green"><i class="bi bi-bar-chart-fill"></i></div>
+                Rekap per Layanan
               </div>
             </div>
-            <div class="quick-grid">
-              <a href="paket.php" class="quick-item">
-                <div class="quick-icon" style="background:#E8F5EE;color:var(--hijau)"><i
-                    class="bi bi-plus-circle-fill"></i></div>
-                <div class="quick-label">Tambah Paket</div>
-              </a>
-              <a href="booking.php?status=pending" class="quick-item">
-                <div class="quick-icon" style="background:#FEF3C7;color:#d97706"><i class="bi bi-hourglass-split"></i>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;padding:4px">
+
+              <!-- REKAP PAKET -->
+              <div class="stat-card green" style="margin:0">
+                <div class="stat-top">
+                  <div>
+                    <div class="stat-label">Paket Umrah Aktif</div>
+                    <div class="stat-num green"><?= $stats['paket_aktif'] ?? 0 ?></div>
+                  </div>
+                  <div class="stat-icon green"><i class="bi bi-briefcase-fill"></i></div>
                 </div>
-                <div class="quick-label">Booking Pending</div>
-              </a>
-              <a href="pembayaran.php?status=pending" class="quick-item">
-                <div class="quick-icon" style="background:#DBEAFE;color:#2563eb"><i class="bi bi-credit-card-fill"></i>
+                <div class="stat-sub">Rp <?= number_format($stats['total_pemasukan'] ?? 0, 0, ',', '.') ?> total
+                  pemasukan terverifikasi</div>
+              </div>
+
+              <!-- REKAP VISA -->
+              <div class="stat-card gold" style="margin:0">
+                <div class="stat-top">
+                  <div>
+                    <div class="stat-label">Visa Umrah</div>
+                    <div class="stat-num gold"><?= (int) ($rekapVisa['total'] ?? 0) ?></div>
+                  </div>
+                  <div class="stat-icon gold"><i class="bi bi-file-earmark-text-fill"></i></div>
                 </div>
-                <div class="quick-label">Verifikasi Bayar</div>
-              </a>
-              <a href="pengaturan.php" class="quick-item">
-                <div class="quick-icon" style="background:#EDE9FE;color:#7c3aed"><i class="bi bi-gear-fill"></i></div>
-                <div class="quick-label">Pengaturan</div>
-              </a>
+                <div class="stat-sub">
+                  <?= (int) ($rekapVisa['proses'] ?? 0) ?> diproses ·
+                  <?= (int) ($rekapVisa['approved'] ?? 0) ?> disetujui ·
+                  <?= (int) ($rekapVisa['rejected'] ?? 0) ?> ditolak
+                </div>
+                <a href="rekap.php" class="card-link" style="margin-top:8px">Lihat detail <i
+                    class="bi bi-arrow-right"></i></a>
+              </div>
+
+              <!-- REKAP TIKET (belum ada modulnya) -->
+              <div class="stat-card blue" style="margin:0;opacity:.55">
+                <div class="stat-top">
+                  <div>
+                    <div class="stat-label">Tiket Pesawat</div>
+                    <div class="stat-num blue">–</div>
+                  </div>
+                  <div class="stat-icon blue"><i class="bi bi-airplane-fill"></i></div>
+                </div>
+                <div class="stat-sub">Modul belum tersedia</div>
+              </div>
+
             </div>
           </div>
 
-          <!-- PEMBAYARAN PENDING -->
           <div class="card-box">
             <div class="card-head">
               <div class="card-head-title">
-                <div class="card-head-icon gold"><i class="bi bi-credit-card-fill"></i></div>Pembayaran Masuk
+                <div class="card-head-icon gold"><i class="bi bi-people-fill"></i></div>
+                Kelola Akun Staff
               </div>
-              <a href="pembayaran.php" class="card-link">Semua <i class="bi bi-arrow-right"></i></a>
+              <a href="kelola-staff.php" class="card-link">Lihat semua <i class="bi bi-arrow-right"></i></a>
             </div>
-            <?php if (!empty($bayar_pending)): ?>
-              <?php foreach ($bayar_pending as $py):
-                $namaP2 = 'Tamu';
-                if (!empty($py['data_jamaah'])) {
-                  $dj2 = json_decode($py['data_jamaah'], true);
-                  $namaP2 = $dj2[0]['nama'] ?? 'Tamu';
-                }
+            <div style="display:flex;align-items:baseline;gap:10px;padding:2px 2px 10px">
+              <div style="font-family:var(--font-display);font-size:1.9rem;font-weight:700;color:var(--hijau)">
+                <?= (int) ($rekapStaff['aktif'] ?? 0) ?>
+              </div>
+              <div style="font-size:.8rem;color:#64748b">
+                akun staff aktif
+                (<?= (int) ($rekapStaff['admin_aktif'] ?? 0) ?> Admin,
+                <?= (int) ($rekapStaff['superadmin_aktif'] ?? 0) ?> Superadmin)
+                <?php $nonaktifStaff = (int) ($rekapStaff['total'] ?? 0) - (int) ($rekapStaff['aktif'] ?? 0); ?>
+                <?php if ($nonaktifStaff > 0): ?>
+                  <div style="font-size:.72rem;color:#94a3b8">+<?= $nonaktifStaff ?> akun nonaktif</div>
+                <?php endif; ?>
+              </div>
+            </div>
+
+            <!-- DAFTAR STAFF -->
+            <div style="display:flex;flex-direction:column;gap:2px;border-top:1px solid #f1f5f9;padding-top:8px">
+              <?php foreach ($daftarStaff as $s):
+                // Online = heartbeat terakhir diterima kurang dari 45 detik lalu
+                // (heartbeat dikirim tiap 25 detik, jadi 45 detik kasih toleransi 1x gagal kirim)
+                $online = $s['last_activity'] && (time() - strtotime($s['last_activity'])) < 45;
+                $lastSeen = $s['last_activity'] ?: $s['last_login'];
                 ?>
                 <div class="pay-item">
-                  <div class="pay-ava"><?= strtoupper(substr($namaP2, 0, 1)) ?></div>
+                  <div class="pay-ava" style="position:relative">
+                    <?= strtoupper(substr($s['nama'], 0, 1)) ?>
+                    <?php if ($online): ?>
+                      <span
+                        style="position:absolute;bottom:-1px;right:-1px;width:9px;height:9px;background:#22c55e;border:2px solid #fff;border-radius:50%"></span>
+                    <?php endif; ?>
+                  </div>
                   <div class="pay-info">
-                    <div class="pay-nama"><?= htmlspecialchars($namaP2) ?></div>
-                    <div class="pay-sub"><?= htmlspecialchars($py['kode_booking']) ?></div>
+                    <div class="pay-nama">
+                      <?= htmlspecialchars($s['nama']) ?>
+                      <span
+                        style="font-size:.65rem;font-weight:600;color:<?= $s['role'] === 'superadmin' ? '#1B6B3A' : '#94a3b8' ?>">
+                        · <?= ucfirst($s['role']) ?>
+                      </span>
+                    </div>
+                    <div class="pay-sub">
+                      <?php if ($s['status'] == 0): ?>
+                        <span style="color:#dc2626">Nonaktif</span>
+                      <?php elseif ($online): ?>
+                        <span style="color:#22c55e;font-weight:600">Online sekarang</span>
+                      <?php elseif ($lastSeen): ?>
+                        Terakhir online <?= timeAgo($lastSeen) ?>
+                      <?php else: ?>
+                        Belum pernah login
+                      <?php endif; ?>
+                    </div>
                   </div>
                   <div class="pay-right">
-                    <div class="pay-jml">Rp <?= number_format($py['jumlah'], 0, ',', '.') ?></div>
-                    <a href="booking-detail.php?id=<?= $py['booking_id'] ?>" class="btn-verif">
-                      <i class="bi bi-check-circle"></i>Verifikasi
-                    </a>
+                    <?php if ($s['role'] === 'superadmin'): ?>
+                      <span style="font-size:.68rem;color:#c7d2d9;font-weight:600">
+                        <?= $s['id'] == $_SESSION['admin_id'] ? 'Anda' : '–' ?>
+                      </span>
+                    <?php elseif ($s['status'] == 1): ?>
+                      <a href="kelola-staff.php?nonaktifkan=<?= $s['id'] ?>" class="btn-verif" style="background:#fee2e2;color:#dc2626"
+                        onclick="return confirm('Nonaktifkan akun <?= htmlspecialchars($s['nama']) ?>?')">
+                        <i class="bi bi-slash-circle"></i>Nonaktifkan
+                      </a>
+                    <?php else: ?>
+                      <a href="kelola-staff.php?aktifkan=<?= $s['id'] ?>" class="btn-verif">
+                        <i class="bi bi-check-circle"></i>Aktifkan
+                      </a>
+                    <?php endif; ?>
                   </div>
                 </div>
               <?php endforeach; ?>
-            <?php else: ?>
-              <div class="empty-pay"><i class="bi bi-check-circle-fill"></i>Semua pembayaran sudah terverifikasi</div>
-            <?php endif; ?>
+            </div>
+
+            <div class="quick-grid" style="margin-top:10px">
+              <a href="kelola-staff.php#formTambah" class="quick-item">
+                <div class="quick-icon" style="background:#E8F5EE;color:var(--hijau)"><i
+                    class="bi bi-person-plus-fill"></i></div>
+                <div class="quick-label">Tambah Akun Staff</div>
+              </a>
+              <a href="kelola-staff.php" class="quick-item">
+                <div class="quick-icon" style="background:#EDE9FE;color:#7c3aed"><i class="bi bi-gear-fill"></i>
+                </div>
+                <div class="quick-label">Kelola Semua Akun</div>
+              </a>
+            </div>
           </div>
 
         </div>
-      </div>
+      <?php else: ?>
+        <!-- ============ TAMPILAN ADMIN: OPERASIONAL (CRUD) ============ -->
+        <!-- CONTENT GRID -->
+        <div class="content-grid">
+
+          <!-- BOOKING TERBARU -->
+          <div class="card-box">
+            <div class="card-head">
+              <div class="card-head-title">
+                <div class="card-head-icon green"><i class="bi bi-calendar-check-fill"></i></div>
+                Booking Terbaru
+              </div>
+              <a href="booking.php" class="card-link">Lihat semua <i class="bi bi-arrow-right"></i></a>
+            </div>
+            <?php if (!empty($bookings)): ?>
+              <div style="overflow-x:auto">
+                <table class="tbl">
+                  <thead>
+                    <tr>
+                      <th>Kode</th>
+                      <th>Nama Pemesan</th>
+                      <th>Paket</th>
+                      <th>Total</th>
+                      <th>Status</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <?php foreach ($bookings as $b):
+                      // Ambil nama dari data_jamaah (karena tidak ada kolom nama_pemesan)
+                      $namaP = 'Tamu';
+                      if (!empty($b['data_jamaah'])) {
+                        $dj = json_decode($b['data_jamaah'], true);
+                        $namaP = $dj[0]['nama'] ?? 'Tamu';
+                      }
+                      $telpP = '';
+                      if (!empty($b['data_jamaah'])) {
+                        $dj = json_decode($b['data_jamaah'], true);
+                        $telpP = $dj[0]['telepon'] ?? '';
+                      }
+                      ?>
+                      <tr>
+                        <td><span class="kode"><?= htmlspecialchars($b['kode_booking']) ?></span></td>
+                        <td>
+                          <div class="nama-cell">
+                            <div class="nama"><?= htmlspecialchars($namaP) ?></div>
+                            <div class="sub"><?= $b['jumlah_jamaah'] ?> jamaah &middot;
+                              <?= tglIndo(date('Y-m-d', strtotime($b['created_at']))) ?>
+                            </div>
+                          </div>
+                        </td>
+                        <td style="font-size:.8rem;color:#64748b">
+                          <?= htmlspecialchars(mb_strimwidth($b['nama_paket'] ?? '-', 0, 25, '…')) ?>
+                        </td>
+                        <td><span class="price">Rp <?= number_format($b['total_harga'], 0, ',', '.') ?></span></td>
+                        <td><?= statusBadge($b['status']) ?></td>
+                        <td><a href="booking-detail.php?id=<?= $b['id'] ?>"
+                            style="color:var(--hijau);font-size:.78rem;text-decoration:none;font-weight:600;white-space:nowrap">Detail
+                            →</a></td>
+                      </tr>
+                    <?php endforeach; ?>
+                  </tbody>
+                </table>
+              </div>
+            <?php else: ?>
+              <div class="empty-state-sm"><i class="bi bi-calendar-x"></i>Belum ada data booking</div>
+            <?php endif; ?>
+          </div>
+
+          <!-- SIDE -->
+          <div class="side-stack">
+
+            <!-- QUICK ACTIONS -->
+            <div class="card-box">
+              <div class="card-head">
+                <div class="card-head-title">
+                  <div class="card-head-icon gold"><i class="bi bi-lightning-charge-fill"></i></div>Aksi Cepat
+                </div>
+              </div>
+              <div class="quick-grid">
+                <a href="paket.php" class="quick-item">
+                  <div class="quick-icon" style="background:#E8F5EE;color:var(--hijau)"><i
+                      class="bi bi-plus-circle-fill"></i></div>
+                  <div class="quick-label">Tambah Paket</div>
+                </a>
+                <a href="booking.php?status=pending" class="quick-item">
+                  <div class="quick-icon" style="background:#FEF3C7;color:#d97706"><i
+                      class="bi bi-hourglass-split"></i>
+                  </div>
+                  <div class="quick-label">Booking Pending</div>
+                </a>
+                <a href="pembayaran.php?status=pending" class="quick-item">
+                  <div class="quick-icon" style="background:#DBEAFE;color:#2563eb"><i
+                      class="bi bi-credit-card-fill"></i>
+                  </div>
+                  <div class="quick-label">Verifikasi Bayar</div>
+                </a>
+                <a href="pengaturan.php" class="quick-item">
+                  <div class="quick-icon" style="background:#EDE9FE;color:#7c3aed"><i class="bi bi-gear-fill"></i>
+                  </div>
+                  <div class="quick-label">Pengaturan</div>
+                </a>
+              </div>
+            </div>
+
+            <!-- PEMBAYARAN PENDING -->
+            <div class="card-box">
+              <div class="card-head">
+                <div class="card-head-title">
+                  <div class="card-head-icon gold"><i class="bi bi-credit-card-fill"></i></div>Pembayaran Masuk
+                </div>
+                <a href="pembayaran.php" class="card-link">Semua <i class="bi bi-arrow-right"></i></a>
+              </div>
+              <?php if (!empty($bayar_pending)): ?>
+                <?php foreach ($bayar_pending as $py):
+                  $namaP2 = 'Tamu';
+                  if (!empty($py['data_jamaah'])) {
+                    $dj2 = json_decode($py['data_jamaah'], true);
+                    $namaP2 = $dj2[0]['nama'] ?? 'Tamu';
+                  }
+                  ?>
+                  <div class="pay-item">
+                    <div class="pay-ava"><?= strtoupper(substr($namaP2, 0, 1)) ?></div>
+                    <div class="pay-info">
+                      <div class="pay-nama"><?= htmlspecialchars($namaP2) ?></div>
+                      <div class="pay-sub"><?= htmlspecialchars($py['kode_booking']) ?></div>
+                    </div>
+                    <div class="pay-right">
+                      <div class="pay-jml">Rp <?= number_format($py['jumlah'], 0, ',', '.') ?></div>
+                      <a href="booking-detail.php?id=<?= $py['booking_id'] ?>" class="btn-verif">
+                        <i class="bi bi-check-circle"></i>Verifikasi
+                      </a>
+                    </div>
+                  </div>
+                <?php endforeach; ?>
+              <?php else: ?>
+                <div class="empty-pay"><i class="bi bi-check-circle-fill"></i>Semua pembayaran sudah terverifikasi
+                </div>
+              <?php endif; ?>
+            </div>
+
+          </div>
+        </div>
+      <?php endif; ?>
 
     </div>
   </div>

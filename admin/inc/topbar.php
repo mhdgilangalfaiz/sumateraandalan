@@ -2,7 +2,7 @@
 $notifCount = (int) (db()->fetchOne("SELECT COUNT(*) as c FROM booking WHERE status='pending'", '', [])['c'] ?? 0)
   + (int) (db()->fetchOne("SELECT COUNT(*) as c FROM pembayaran WHERE status='pending'", '', [])['c'] ?? 0);
 ?>
-<div class="topbar <?= isSuperadmin() ? 'role-superadmin' : '' ?>">
+<div class="topbar">
   <div class="topbar-left">
     <button class="hamburger" id="hamburger" onclick="toggleSidebar()">
       <i class="bi bi-list" style="font-size:1.2rem"></i>
@@ -35,4 +35,13 @@ $notifCount = (int) (db()->fetchOne("SELECT COUNT(*) as c FROM booking WHERE sta
     document.getElementById('overlay').classList.remove('show');
   }
   window.addEventListener('resize', () => { if (window.innerWidth > 900) closeSidebar(); });
+
+  // ── HEARTBEAT STATUS ONLINE ──────────────────────────────────
+  // Lapor "saya masih aktif" tiap 25 detik selagi halaman ini terbuka.
+  // Dipakai dashboard superadmin buat tahu staff mana yang online.
+  function kirimHeartbeat() {
+    fetch('<?= BASE_URL ?>/admin/ajax-heartbeat.php', { method: 'POST', keepalive: true }).catch(() => { });
+  }
+  kirimHeartbeat(); // langsung sekali begitu halaman dibuka
+  setInterval(kirimHeartbeat, 25000);
 </script>

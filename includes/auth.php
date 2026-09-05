@@ -72,6 +72,18 @@ function blockIfSuperadmin(string $redirectTo): void
 }
 
 /**
+ * Halaman khusus superadmin (misal: Kelola Staff). Admin biasa tidak boleh
+ * masuk sama sekali — langsung ditolak & diarahkan ke dashboard.
+ */
+function requireSuperadminOnly(): void
+{
+    requireAdmin();
+    if (!isSuperadmin()) {
+        redirect(BASE_URL . '/admin/dashboard.php', 'Halaman ini hanya untuk Superadmin.', 'error');
+    }
+}
+
+/**
  * Login admin — simpan ke session
  */
 function loginAdmin(array $admin): void

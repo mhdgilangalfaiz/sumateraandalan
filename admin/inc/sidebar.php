@@ -12,7 +12,7 @@ function isActive(string $file): string
 }
 ?>
 <div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
-<aside class="sidebar <?= isSuperadmin() ? 'role-superadmin' : '' ?>" id="sidebar">
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-brand">
     <div class="brand-icon"><i class="bi bi-moon-stars-fill"></i></div>
     <div>
@@ -54,6 +54,11 @@ function isActive(string $file): string
     <a href="<?= BASE_URL ?>/admin/pengaturan.php" class="nav-link-item <?= isActive('pengaturan.php') ?>">
       <i class="bi bi-gear"></i> <?= isSuperadmin() ? 'Lihat Pengaturan' : 'Pengaturan' ?>
     </a>
+    <?php if (isSuperadmin()): ?>
+      <a href="<?= BASE_URL ?>/admin/kelola-staff.php" class="nav-link-item <?= isActive('kelola-staff.php') ?>">
+        <i class="bi bi-people"></i> Kelola Staff
+      </a>
+    <?php endif; ?>
   </nav>
   <div class="sidebar-footer">
     <div class="admin-card">
