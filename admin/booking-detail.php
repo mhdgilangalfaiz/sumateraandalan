@@ -35,6 +35,7 @@ foreach ($pembayaran as $py) {
 
 // PROSES AKSI
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  blockIfSuperadmin(BASE_URL . '/admin/booking-detail.php?id=' . $id);
   checkCsrf();
   $aksi = $_POST['aksi'] ?? '';
 
@@ -43,13 +44,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $catatan_admin = sanitize($_POST['catatan_admin'] ?? '');
     $allowed = ['pending', 'confirmed', 'dp_paid', 'lunas', 'berangkat', 'selesai', 'cancelled'];
     if (in_array($status_baru, $allowed)) {
-      db()->execute(
-        "UPDATE booking SET status = ?, catatan_admin = ?, updated_at = NOW() WHERE id = ?",
-        'ssi',
-        [$status_baru, $catatan_admin, $id]
-      );
-      // Notifikasi WA link (akan dibuka di tab baru)
-      redirect("booking-detail.php?id=$id", 'Status booking berhasil diperbarui.', 'sukses');
+      $status_lama = $booking['status'];
+
+      db()->beginTransaction();
+      try {
+        db()->execute(
+          "UPDATE booking SET status = ?, catatan_admin = ?, updated_at = NOW() WHERE id = ?",
+          'ssi',
+          [$status_baru, $catatan_admin, $id]
+        );
+
+        // Booking baru dibatalkan -> kembalikan kuota yang tadinya terpakai
+        if ($status_baru === 'cancelled' && $status_lama !== 'cancelled') {
+          db()->execute("UPDATE paket_umrah SET sisa_kuota = sisa_kuota + ? WHERE id = ?", 'ii', [$booking['jumlah_jamaah'], $booking['paket_id']]);
+          if ($booking['jadwal_id']) {
+            db()->execute("UPDATE jadwal SET terisi = terisi - ? WHERE id = ?", 'ii', [$booking['jumlah_jamaah'], $booking['jadwal_id']]);
+          }
+        }
+
+        // Booking yang tadinya cancelled diaktifkan lagi -> kurangi kuota lagi,
+        // tapi cek dulu kuotanya masih cukup (bisa saja sudah diambil booking lain)
+        if ($status_lama === 'cancelled' && $status_baru !== 'cancelled') {
+          $cekKuota = db()->fetchOne("SELECT sisa_kuota FROM paket_umrah WHERE id = ? FOR UPDATE", 'i', [$booking['paket_id']]);
+          if (!$cekKuota || $cekKuota['sisa_kuota'] < $booking['jumlah_jamaah']) {
+            throw new Exception('Tidak bisa mengaktifkan kembali: kuota paket ini sudah tidak mencukupi.');
+          }
+          db()->execute("UPDATE paket_umrah SET sisa_kuota = sisa_kuota - ? WHERE id = ?", 'ii', [$booking['jumlah_jamaah'], $booking['paket_id']]);
+          if ($booking['jadwal_id']) {
+            db()->execute("UPDATE jadwal SET terisi = terisi + ? WHERE id = ?", 'ii', [$booking['jumlah_jamaah'], $booking['jadwal_id']]);
+          }
+        }
+
+        db()->commit();
+        redirect("booking-detail.php?id=$id", 'Status booking berhasil diperbarui.', 'sukses');
+      } catch (Exception $e) {
+        db()->rollback();
+        redirect("booking-detail.php?id=$id", $e->getMessage(), 'error');
+      }
     }
   }
 
@@ -247,7 +278,7 @@ $dataJamaah = json_decode($booking['data_jamaah'] ?? '[]', true);
                           ?>
                         </td>
                         <td>
-                          <?php if ($py['status'] === 'pending'): ?>
+                          <?php if ($py['status'] === 'pending' && !isSuperadmin()): ?>
                             <form method="POST" style="display:inline">
                               <?= csrfField() ?>
                               <input type="hidden" name="aksi" value="verifikasi_bayar">
@@ -260,6 +291,8 @@ $dataJamaah = json_decode($booking['data_jamaah'] ?? '[]', true);
                             <button class="btn-admin-sm btn-merah" onclick="tolakBayar(<?= $py['id'] ?>)">
                               <i class="bi bi-x-circle"></i> Tolak
                             </button>
+                          <?php elseif ($py['status'] === 'pending'): ?>
+                            <span style="color:#94a3b8;font-size:.75rem">–</span>
                           <?php endif; ?>
                         </td>
                       </tr>
@@ -334,7 +367,8 @@ $dataJamaah = json_decode($booking['data_jamaah'] ?? '[]', true);
             </div>
           </div>
 
-          <!-- UBAH STATUS -->
+          <!-- UBAH STATUS (disembunyikan untuk superadmin, read-only) -->
+          <?php if (!isSuperadmin()): ?>
           <div class="section-card">
             <div class="sc-header">
               <div class="sc-title"><i class="bi bi-arrow-repeat me-2" style="color:var(--emas)"></i>Ubah Status</div>
@@ -366,6 +400,19 @@ $dataJamaah = json_decode($booking['data_jamaah'] ?? '[]', true);
               </form>
             </div>
           </div>
+          <?php else: ?>
+          <div class="section-card">
+            <div class="sc-header">
+              <div class="sc-title"><i class="bi bi-arrow-repeat me-2" style="color:var(--emas)"></i>Status Booking</div>
+            </div>
+            <div style="padding:16px 20px">
+              <?= statusBadge($booking['status']) ?>
+              <p class="mt-2 mb-0" style="font-size:.78rem;color:#94a3b8">
+                <i class="bi bi-lock-fill"></i> Superadmin tidak bisa mengubah status (read-only).
+              </p>
+            </div>
+          </div>
+          <?php endif; ?>
 
         </div>
       </div>

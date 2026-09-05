@@ -6,18 +6,22 @@ $pageTitle = 'Testimoni';
 
 // AKSI
 if (isset($_GET['approve'])) {
+    blockIfSuperadmin(BASE_URL . '/admin/testimoni.php');
     db()->execute("UPDATE testimoni SET status='approved', featured=1 WHERE id=?", 'i', [(int) $_GET['approve']]);
     redirect(BASE_URL . '/admin/testimoni.php', 'Testimoni disetujui dan ditampilkan.', 'sukses');
 }
 if (isset($_GET['reject'])) {
+    blockIfSuperadmin(BASE_URL . '/admin/testimoni.php');
     db()->execute("UPDATE testimoni SET status='rejected' WHERE id=?", 'i', [(int) $_GET['reject']]);
     redirect(BASE_URL . '/admin/testimoni.php', 'Testimoni ditolak.', 'sukses');
 }
 if (isset($_GET['hapus'])) {
+    blockIfSuperadmin(BASE_URL . '/admin/testimoni.php');
     db()->execute("DELETE FROM testimoni WHERE id=?", 'i', [(int) $_GET['hapus']]);
     redirect(BASE_URL . '/admin/testimoni.php', 'Testimoni dihapus.', 'sukses');
 }
 if (isset($_GET['toggle_featured'])) {
+    blockIfSuperadmin(BASE_URL . '/admin/testimoni.php');
     $t = db()->fetchOne("SELECT featured FROM testimoni WHERE id=?", 'i', [(int) $_GET['toggle_featured']]);
     if ($t) {
         db()->execute("UPDATE testimoni SET featured=? WHERE id=?", 'ii', [$t['featured'] ? 0 : 1, (int) $_GET['toggle_featured']]);
@@ -96,11 +100,17 @@ foreach (db()->fetchAll("SELECT status, COUNT(*) as c FROM testimoni GROUP BY st
                                             </div>
                                         </div>
                                         <!-- Featured toggle -->
+                                        <?php if (!isSuperadmin()): ?>
                                         <a href="testimoni.php?toggle_featured=<?= $t['id'] ?>&status=<?= $status_filter ?>"
                                             title="<?= $t['featured'] ? 'Hapus dari featured' : 'Jadikan featured' ?>"
                                             style="color:<?= $t['featured'] ? 'var(--emas)' : '#d1d5db' ?>;font-size:1.1rem;text-decoration:none">
                                             <i class="bi bi-star-fill"></i>
                                         </a>
+                                        <?php elseif ($t['featured']): ?>
+                                        <span title="Featured" style="color:var(--emas);font-size:1.1rem">
+                                            <i class="bi bi-star-fill"></i>
+                                        </span>
+                                        <?php endif; ?>
                                     </div>
                                     <!-- Rating -->
                                     <div style="color:#f59e0b;font-size:.85rem;margin-bottom:8px">
@@ -128,6 +138,7 @@ foreach (db()->fetchAll("SELECT status, COUNT(*) as c FROM testimoni GROUP BY st
                                         </span>
                                     </div>
                                     <!-- Aksi -->
+                                    <?php if (!isSuperadmin()): ?>
                                     <div class="d-flex gap-2 mt-3 flex-wrap">
                                         <?php if ($t['status'] === 'pending'): ?>
                                             <a href="testimoni.php?approve=<?= $t['id'] ?>&status=<?= $status_filter ?>"
@@ -154,6 +165,7 @@ foreach (db()->fetchAll("SELECT status, COUNT(*) as c FROM testimoni GROUP BY st
                                             <i class="bi bi-trash"></i>
                                         </a>
                                     </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>

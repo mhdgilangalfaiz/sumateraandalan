@@ -6,12 +6,14 @@ $pageTitle = 'Jadwal Keberangkatan';
 
 // HAPUS
 if (isset($_GET['hapus'])) {
+    blockIfSuperadmin(BASE_URL . '/admin/jadwal.php');
     db()->execute("DELETE FROM jadwal WHERE id=?", 'i', [(int) $_GET['hapus']]);
     redirect(BASE_URL . '/admin/jadwal.php', 'Jadwal berhasil dihapus.', 'sukses');
 }
 
 // SIMPAN
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    blockIfSuperadmin(BASE_URL . '/admin/jadwal.php');
     checkCsrf();
     $id = (int) ($_POST['id'] ?? 0);
     $paket_id = (int) ($_POST['paket_id'] ?? 0);
@@ -75,16 +77,42 @@ $pakets = db()->fetchAll("SELECT id, nama_paket FROM paket_umrah WHERE status='a
 
             <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
                 <h4 class="page-title">Jadwal Keberangkatan</h4>
+                <?php if (!isSuperadmin()): ?>
                 <button class="btn-admin btn-hijau"
                     onclick="document.getElementById('formPanel').scrollIntoView({behavior:'smooth'})">
                     <i class="bi bi-plus-circle-fill"></i> Tambah Jadwal
                 </button>
+                <?php endif; ?>
             </div>
+
+            <?php if (isSuperadmin()):
+                $totalKuotaJ = 0; $totalTerisiJ = 0; $totalAktifJ = 0;
+                foreach ($jadwals as $jj) {
+                    $totalKuotaJ += $jj['kuota'];
+                    $totalTerisiJ += $jj['terisi'];
+                    if ($jj['status'] === 'aktif') $totalAktifJ++;
+                }
+            ?>
+            <div class="stat-summary-row mb-4">
+                <div class="stat-mini-card">
+                    <div class="stat-mini-value"><?= count($jadwals) ?></div>
+                    <div class="stat-mini-label">Total Jadwal</div>
+                </div>
+                <div class="stat-mini-card">
+                    <div class="stat-mini-value"><?= $totalAktifJ ?></div>
+                    <div class="stat-mini-label">Jadwal Aktif</div>
+                </div>
+                <div class="stat-mini-card">
+                    <div class="stat-mini-value"><?= $totalTerisiJ ?>/<?= $totalKuotaJ ?></div>
+                    <div class="stat-mini-label">Kuota Terisi</div>
+                </div>
+            </div>
+            <?php endif; ?>
 
             <!-- TABEL -->
             <div class="section-card mb-4">
                 <div class="sc-header">
-                    <div class="sc-title"><i class="bi bi-calendar3 me-2" style="color:var(--emas)"></i>Daftar Jadwal
+                    <div class="sc-title"><i class="bi bi-calendar3 me-2" style="color:var(--emas)"></i><?= isSuperadmin() ? 'Laporan Jadwal' : 'Daftar Jadwal' ?>
                     </div>
                 </div>
                 <div style="overflow-x:auto">
@@ -98,7 +126,7 @@ $pakets = db()->fetchAll("SELECT id, nama_paket FROM paket_umrah WHERE status='a
                                 <th>Terisi</th>
                                 <th>Harga Khusus</th>
                                 <th>Status</th>
-                                <th>Aksi</th>
+                                <?php if (!isSuperadmin()): ?><th>Aksi</th><?php endif; ?>
                             </tr>
                         </thead>
                         <tbody>
@@ -146,6 +174,7 @@ $pakets = db()->fetchAll("SELECT id, nama_paket FROM paket_umrah WHERE status='a
                                         <td>
                                             <?= statusBadge($j['status']) ?>
                                         </td>
+                                        <?php if (!isSuperadmin()): ?>
                                         <td>
                                             <div class="d-flex gap-1">
                                                 <a href="jadwal.php?edit=<?= $j['id'] ?>" class="btn-admin-sm btn-biru"><i
@@ -155,11 +184,12 @@ $pakets = db()->fetchAll("SELECT id, nama_paket FROM paket_umrah WHERE status='a
                                                         class="bi bi-trash"></i></a>
                                             </div>
                                         </td>
+                                        <?php endif; ?>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="8" class="empty-cell">
+                                    <td colspan="<?= isSuperadmin() ? 7 : 8 ?>" class="empty-cell">
                                         <i class="bi bi-calendar-x d-block mb-2" style="font-size:2rem;opacity:.3"></i>Belum
                                         ada jadwal
                                     </td>
@@ -170,7 +200,8 @@ $pakets = db()->fetchAll("SELECT id, nama_paket FROM paket_umrah WHERE status='a
                 </div>
             </div>
 
-            <!-- FORM -->
+            <!-- FORM (disembunyikan untuk superadmin, read-only) -->
+            <?php if (!isSuperadmin()): ?>
             <div class="section-card" id="formPanel">
                 <div class="sc-header">
                     <div class="sc-title">
@@ -247,6 +278,7 @@ $pakets = db()->fetchAll("SELECT id, nama_paket FROM paket_umrah WHERE status='a
                     </form>
                 </div>
             </div>
+            <?php endif; ?>
 
         </div>
     </div>

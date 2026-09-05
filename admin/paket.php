@@ -7,6 +7,7 @@ $pageTitle = 'Paket Umrah';
 
 // HAPUS
 if (isset($_GET['hapus'])) {
+    blockIfSuperadmin(BASE_URL . '/admin/paket.php');
     $id = (int) $_GET['hapus'];
     $paket = db()->fetchOne("SELECT * FROM paket_umrah WHERE id = ?", 'i', [$id]);
     if ($paket) {
@@ -22,6 +23,7 @@ if (isset($_GET['hapus'])) {
 
 // SIMPAN (tambah/edit)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    blockIfSuperadmin(BASE_URL . '/admin/paket.php');
     checkCsrf();
     $id = (int) ($_POST['id'] ?? 0);
     $nama = sanitize($_POST['nama_paket'] ?? '');
@@ -218,16 +220,47 @@ $pakets = db()->fetchAll("SELECT * FROM paket_umrah ORDER BY urutan ASC, id DESC
 
             <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
                 <h4 class="page-title">Paket Umrah</h4>
+                <?php if (!isSuperadmin()): ?>
                 <button class="btn-admin btn-hijau"
                     onclick="document.getElementById('formPanel').scrollIntoView({behavior:'smooth'})">
                     <i class="bi bi-plus-circle-fill"></i> Tambah Paket
                 </button>
+                <?php endif; ?>
             </div>
+
+            <?php if (isSuperadmin()):
+                $totalAktif = 0; $totalKuota = 0; $totalSisa = 0; $totalFeatured = 0;
+                foreach ($pakets as $pp) {
+                    if ($pp['status'] === 'aktif') $totalAktif++;
+                    $totalKuota += $pp['kuota'];
+                    $totalSisa += $pp['sisa_kuota'];
+                    if ($pp['featured']) $totalFeatured++;
+                }
+            ?>
+            <div class="stat-summary-row mb-4">
+                <div class="stat-mini-card">
+                    <div class="stat-mini-value"><?= count($pakets) ?></div>
+                    <div class="stat-mini-label">Total Paket</div>
+                </div>
+                <div class="stat-mini-card">
+                    <div class="stat-mini-value"><?= $totalAktif ?></div>
+                    <div class="stat-mini-label">Paket Aktif</div>
+                </div>
+                <div class="stat-mini-card">
+                    <div class="stat-mini-value"><?= $totalSisa ?>/<?= $totalKuota ?></div>
+                    <div class="stat-mini-label">Sisa Kuota</div>
+                </div>
+                <div class="stat-mini-card">
+                    <div class="stat-mini-value"><?= $totalFeatured ?></div>
+                    <div class="stat-mini-label">Featured</div>
+                </div>
+            </div>
+            <?php endif; ?>
 
             <!-- TABEL PAKET -->
             <div class="section-card mb-4">
                 <div class="sc-header">
-                    <div class="sc-title"><i class="bi bi-briefcase-fill me-2" style="color:var(--emas)"></i>Daftar
+                    <div class="sc-title"><i class="bi bi-briefcase-fill me-2" style="color:var(--emas)"></i><?= isSuperadmin() ? 'Laporan' : 'Daftar' ?>
                         Paket (<?= count($pakets) ?>)
                     </div>
                 </div>
@@ -242,7 +275,7 @@ $pakets = db()->fetchAll("SELECT * FROM paket_umrah ORDER BY urutan ASC, id DESC
                                 <th>Kuota</th>
                                 <th>Status</th>
                                 <th>Featured</th>
-                                <th>Aksi</th>
+                                <?php if (!isSuperadmin()): ?><th>Aksi</th><?php endif; ?>
                             </tr>
                         </thead>
                         <tbody>
@@ -304,6 +337,7 @@ $pakets = db()->fetchAll("SELECT * FROM paket_umrah ORDER BY urutan ASC, id DESC
                                                 <span style="color:#d1d5db"><i class="bi bi-star"></i></span>
                                             <?php endif; ?>
                                         </td>
+                                        <?php if (!isSuperadmin()): ?>
                                         <td>
                                             <div class="d-flex gap-1">
                                                 <a href="paket.php?edit=<?= $p['id'] ?>" class="btn-admin-sm btn-biru">
@@ -315,11 +349,12 @@ $pakets = db()->fetchAll("SELECT * FROM paket_umrah ORDER BY urutan ASC, id DESC
                                                 </a>
                                             </div>
                                         </td>
+                                        <?php endif; ?>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="8" class="empty-cell">
+                                    <td colspan="<?= isSuperadmin() ? 7 : 8 ?>" class="empty-cell">
                                         <i class="bi bi-briefcase d-block mb-2" style="font-size:2rem;opacity:.3"></i>Belum
                                         ada paket
                                     </td>
@@ -330,7 +365,8 @@ $pakets = db()->fetchAll("SELECT * FROM paket_umrah ORDER BY urutan ASC, id DESC
                 </div>
             </div>
 
-            <!-- FORM TAMBAH/EDIT -->
+            <!-- FORM TAMBAH/EDIT (disembunyikan untuk superadmin, read-only) -->
+            <?php if (!isSuperadmin()): ?>
             <div class="section-card" id="formPanel">
                 <div class="sc-header">
                     <div class="sc-title">
@@ -514,6 +550,7 @@ $pakets = db()->fetchAll("SELECT * FROM paket_umrah ORDER BY urutan ASC, id DESC
                     </form>
                 </div>
             </div>
+            <?php endif; ?>
 
         </div>
     </div>

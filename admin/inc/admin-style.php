@@ -306,6 +306,159 @@
     color: #1a1a1a;
   }
 
+  /* ROLE INDICATOR — perbedaan visual Staff Admin vs Superadmin */
+  .sidebar.role-superadmin {
+    background: linear-gradient(180deg, #2E1A47 0%, #4C2E7A 100%);
+  }
+
+  .sidebar.role-superadmin .nav-link-item.active {
+    background: linear-gradient(135deg, rgba(168, 130, 234, .28), rgba(168, 130, 234, .1));
+    color: #D9C6FA;
+    border: 1px solid rgba(168, 130, 234, .25);
+  }
+
+  .sidebar.role-superadmin .nav-link-item.active i {
+    color: #B794F6;
+  }
+
+  .sidebar.role-superadmin .brand-icon {
+    background: linear-gradient(135deg, #A882EA, #D9C6FA);
+    color: #2E1A47;
+  }
+
+  .sidebar.role-superadmin .brand-name span {
+    color: #B794F6;
+  }
+
+  .sidebar.role-superadmin .admin-ava {
+    background: linear-gradient(135deg, #6B46C1, #A882EA);
+  }
+
+  .role-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: .6rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 20px;
+    margin-top: 6px;
+  }
+
+  .role-tag.staff {
+    background: rgba(201, 168, 76, .18);
+    color: var(--emas-muda);
+    border: 1px solid rgba(201, 168, 76, .3);
+  }
+
+  .role-tag.superadmin {
+    background: rgba(168, 130, 234, .2);
+    color: #D9C6FA;
+    border: 1px solid rgba(168, 130, 234, .35);
+  }
+
+  .topbar.role-superadmin {
+    border-bottom: 2px solid #A882EA;
+  }
+
+  .topbar-role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: .62rem;
+    font-weight: 800;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-left: 10px;
+  }
+
+  .topbar-role-badge.staff {
+    background: #FEF3C7;
+    color: #92400E;
+  }
+
+  .topbar-role-badge.superadmin {
+    background: #EDE4FB;
+    color: #5B21B6;
+  }
+
+  .badge-readonly {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: .72rem;
+    font-weight: 700;
+    color: #5B21B6;
+    background: #EDE4FB;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid #D9C6FA;
+  }
+
+  /* STAT SUMMARY — pengganti tombol "Tambah" di halaman superadmin */
+  .stat-summary-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .stat-mini-card {
+    background: white;
+    border: 1px solid #EDE4FB;
+    border-left: 4px solid #A882EA;
+    border-radius: 12px;
+    padding: 10px 16px;
+    min-width: 130px;
+    box-shadow: 0 1px 3px rgba(107, 70, 193, .06);
+  }
+
+  .stat-mini-value {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #5B21B6;
+    line-height: 1.1;
+  }
+
+  .stat-mini-label {
+    font-size: .68rem;
+    color: #8b7ba8;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-top: 2px;
+  }
+
+  /* PENGATURAN — tampilan laporan untuk superadmin (bukan form) */
+  .settings-view-item {
+    padding: 10px 0;
+    border-bottom: 1px dashed #eef0f3;
+  }
+
+  .settings-view-item:last-child {
+    border-bottom: none;
+  }
+
+  .settings-view-label {
+    font-size: .72rem;
+    color: #94a3b8;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 3px;
+  }
+
+  .settings-view-value {
+    font-size: .88rem;
+    color: #1a1a1a;
+    font-weight: 500;
+    white-space: pre-line;
+  }
+
   .notif-dot {
     position: absolute;
     top: 7px;

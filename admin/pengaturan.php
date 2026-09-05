@@ -5,6 +5,7 @@ cekAdmin();
 $pageTitle = 'Pengaturan';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    blockIfSuperadmin(BASE_URL . '/admin/pengaturan.php');
     checkCsrf();
     foreach ($_POST as $key => $val) {
         if ($key === 'submit' || $key === 'csrf_token')
@@ -79,8 +80,44 @@ $fieldMap = [
 
             <div class="d-flex align-items-center justify-content-between mb-4">
                 <h4 class="page-title">Pengaturan Website</h4>
+                <?php if (isSuperadmin()): ?>
+                <span class="badge-readonly"><i class="bi bi-eye"></i> Mode Lihat Saja</span>
+                <?php endif; ?>
             </div>
 
+            <?php if (isSuperadmin()): ?>
+                <!-- TAMPILAN LAPORAN — superadmin cuma lihat, bukan form -->
+                <div class="row g-4">
+                    <?php foreach ($groups as $grupKey => $grupInfo): ?>
+                        <div class="col-12">
+                            <div class="section-card">
+                                <div class="sc-header">
+                                    <div class="sc-title">
+                                        <i class="bi <?= $grupInfo['icon'] ?> me-2" style="color:var(--emas)"></i>
+                                        <?= $grupInfo['label'] ?>
+                                    </div>
+                                </div>
+                                <div style="padding:22px">
+                                    <div class="row">
+                                        <?php foreach ($fieldMap as $key => $field):
+                                            if ($field['grup'] !== $grupKey)
+                                                continue;
+                                            $val = $settings[$key] ?? '';
+                                            ?>
+                                            <div class="col-md-6 settings-view-item">
+                                                <div class="settings-view-label"><?= $field['label'] ?></div>
+                                                <div class="settings-view-value">
+                                                    <?= $val !== '' ? htmlspecialchars($val) : '<span style="color:#d1d5db">– belum diisi –</span>' ?>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
             <form method="POST">
             <?= csrfField() ?>
                 <div class="row g-4">
@@ -131,6 +168,7 @@ $fieldMap = [
                     </div>
                 </div>
             </form>
+            <?php endif; ?>
 
         </div>
     </div>

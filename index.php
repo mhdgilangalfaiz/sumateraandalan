@@ -651,69 +651,6 @@ $slider_list = db()->fetchAll("SELECT * FROM slider WHERE status = 1 ORDER BY ur
             color: var(--teks-abu);
         }
 
-        /* ===== PORTOFOLIO ===== */
-        .porto-section {
-            padding: 90px 0;
-            background: var(--krem);
-        }
-
-        .porto-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: auto;
-            gap: 12px;
-        }
-
-        .porto-item {
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .porto-item:first-child {
-            grid-column: span 2;
-            grid-row: span 2;
-        }
-
-        .porto-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.4s;
-            display: block;
-            min-height: 160px;
-        }
-
-        .porto-item:first-child img {
-            min-height: 320px;
-        }
-
-        .porto-item:hover img {
-            transform: scale(1.05);
-        }
-
-        .porto-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(transparent, rgba(27, 77, 46, 0.8));
-            opacity: 0;
-            transition: opacity 0.3s;
-            display: flex;
-            align-items: flex-end;
-            padding: 1rem;
-        }
-
-        .porto-item:hover .porto-overlay {
-            opacity: 1;
-        }
-
-        .porto-overlay-text {
-            color: white;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
         /* ===== TESTIMONI ===== */
         .testi-section {
             padding: 90px 0;
@@ -1095,22 +1032,11 @@ $slider_list = db()->fetchAll("SELECT * FROM slider WHERE status = 1 ORDER BY ur
                 margin-top: 3rem;
             }
 
-            .porto-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .porto-item:first-child {
-                grid-column: span 2;
-            }
         }
 
         @media (max-width: 768px) {
             .hero-stats {
                 gap: 1.5rem;
-            }
-
-            .porto-grid {
-                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
@@ -1130,15 +1056,27 @@ $slider_list = db()->fetchAll("SELECT * FROM slider WHERE status = 1 ORDER BY ur
             </button>
             <div class="collapse navbar-collapse" id="navMenu">
                 <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
-                    <li class="nav-item"><a class="nav-link" href="#paket">Paket Umrah</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#porto">Portofolio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#beranda">Beranda</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="layananDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Layanan Kami
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="layananDropdown">
+                            <li><a class="dropdown-item" href="pages/paket.php"><i
+                                        class="bi bi-suitcase-lg me-2"></i>Paket Umrah</a></li>
+                            <li><a class="dropdown-item" href="pages/visa.php"><i
+                                        class="bi bi-file-earmark-text me-2"></i>Visa Umrah</a></li>
+                            <li><a class="dropdown-item" href="pages/tiket.php"><i
+                                        class="bi bi-airplane me-2"></i>Tiket Pesawat</a></li>
+                        </ul>
+                    </li>
                     <li class="nav-item"><a class="nav-link" href="#testimoni">Testimoni</a></li>
                     <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
                     <li class="nav-item"><a class="nav-link" href="#kontak">Kontak</a></li>
-                    <li class="nav-item"><a class="nav-link" href="pages/cek-booking.php">Cek Booking</a></li>
                     <li class="nav-item ms-2">
-                        <a class="nav-link btn-navbar" href="pages/booking.php">
-                            <i class="bi bi-calendar-check me-1"></i>Daftar Sekarang
+                        <a class="nav-link btn-navbar" href="pages/login.php">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Login
                         </a>
                     </li>
                 </ul>
@@ -1147,7 +1085,7 @@ $slider_list = db()->fetchAll("SELECT * FROM slider WHERE status = 1 ORDER BY ur
     </nav>
 
     <!-- ===== HERO ===== -->
-    <section class="hero-section">
+    <section class="hero-section" id="beranda">
         <div class="hero-bg"></div>
         <div class="hero-pattern"></div>
         <div class="hero-glow"></div>
@@ -1427,44 +1365,6 @@ $slider_list = db()->fetchAll("SELECT * FROM slider WHERE status = 1 ORDER BY ur
         </div>
     </section>
 
-    <!-- ===== PORTOFOLIO ===== -->
-    <section class="porto-section" id="porto">
-        <div class="container">
-            <div class="text-center mb-5" data-aos="fade-up">
-                <div class="section-label">Portofolio</div>
-                <h2 class="section-title">Momen Perjalanan Jamaah Kami</h2>
-                <p class="section-desc mx-auto">Ribuan jamaah telah mempercayakan ibadah umrah mereka kepada kami.
-                    Berikut sebagian momen berharga mereka.</p>
-            </div>
-            <div class="porto-grid" data-aos="fade-up" data-aos-delay="60">
-                <?php
-                $porto_imgs = [
-                    ['src' => 'https://images.unsplash.com/photo-1575039375208-e4e8e7a66cc9?w=800&q=80', 'label' => 'Masjidil Haram, Mekkah'],
-                    ['src' => 'https://images.unsplash.com/photo-1591672299888-e16a08b6c7ce?w=400&q=80', 'label' => 'Masjid Nabawi, Madinah'],
-                    ['src' => 'https://images.unsplash.com/photo-1566378246598-5b11a0d486cc?w=400&q=80', 'label' => 'Jamaah Berdoa'],
-                    ['src' => 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80', 'label' => 'Hotel Akomodasi'],
-                    ['src' => 'https://images.unsplash.com/photo-1587974928442-77dc3e0dba72?w=400&q=80', 'label' => 'Ziarah Bersejarah'],
-                ];
-                foreach ($porto_imgs as $pi => $img):
-                    ?>
-                    <div class="porto-item">
-                        <img src="<?= $img['src'] ?>" alt="<?= $img['label'] ?>" loading="lazy">
-                        <div class="porto-overlay">
-                            <div class="porto-overlay-text"><i class="bi bi-geo-alt me-1"></i>
-                                <?= $img['label'] ?>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-            <div class="text-center mt-4" data-aos="fade-up">
-                <a href="pages/galeri.php" class="btn btn-outline-success rounded-pill px-4">
-                    <i class="bi bi-images me-2"></i>Lihat Galeri Lengkap
-                </a>
-            </div>
-        </div>
-    </section>
-
     <!-- ===== TESTIMONI ===== -->
     <section class="testi-section" id="testimoni">
         <div class="container">
@@ -1663,10 +1563,10 @@ $slider_list = db()->fetchAll("SELECT * FROM slider WHERE status = 1 ORDER BY ur
                 </div>
                 <div class="col-6 col-lg-2">
                     <div class="footer-title">Layanan</div>
-                    <a href="#paket" class="footer-link">Paket Umrah</a>
+                    <a href="pages/paket.php" class="footer-link">Paket Umrah</a>
+                    <a href="pages/visa.php" class="footer-link">Visa Umrah</a>
+                    <a href="pages/tiket.php" class="footer-link">Tiket Pesawat</a>
                     <a href="pages/booking.php" class="footer-link">Pendaftaran</a>
-                    <a href="pages/cek-booking.php" class="footer-link">Cek Booking</a>
-                    <a href="pages/pembayaran.php" class="footer-link">Pembayaran</a>
                 </div>
                 <div class="col-6 col-lg-2">
                     <div class="footer-title">Informasi</div>

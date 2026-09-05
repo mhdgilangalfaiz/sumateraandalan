@@ -38,6 +38,7 @@ $bayar_pending = db()->fetchAll("
 // ── VARIABEL ADMIN ───────────────────────────────────────────
 $adminNama = $_SESSION['admin_nama'] ?? 'Admin';
 $adminRole = $_SESSION['admin_role'] ?? 'admin';
+$pageTitle = 'Dashboard';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -51,6 +52,7 @@ $adminRole = $_SESSION['admin_role'] ?? 'admin';
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap"
     rel="stylesheet">
+  <?php include __DIR__ . '/inc/admin-style.php'; ?>
   <style>
     :root {
       --hijau-tua: #1B4D2E;
@@ -77,299 +79,7 @@ $adminRole = $_SESSION['admin_role'] ?? 'admin';
       min-height: 100vh
     }
 
-    /* SIDEBAR */
-    .sidebar {
-      position: fixed;
-      inset: 0 auto 0 0;
-      width: var(--sidebar-w);
-      background: linear-gradient(180deg, #0D2B1A, #1B4D2E 100%);
-      display: flex;
-      flex-direction: column;
-      z-index: 200;
-      transition: transform .3s;
-      box-shadow: 4px 0 24px rgba(0, 0, 0, .15);
-      overflow-y: auto
-    }
-
-    .sidebar::-webkit-scrollbar {
-      width: 4px
-    }
-
-    .sidebar::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, .15);
-      border-radius: 2px
-    }
-
-    .sidebar-brand {
-      padding: 24px 20px 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, .07);
-      flex-shrink: 0
-    }
-
-    .brand-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--emas), var(--emas-muda));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      color: var(--hijau-tua);
-      flex-shrink: 0
-    }
-
-    .brand-name {
-      font-family: var(--font-display);
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #fff
-    }
-
-    .brand-name span {
-      color: var(--emas)
-    }
-
-    .brand-sub {
-      font-size: .68rem;
-      color: rgba(255, 255, 255, .35);
-      margin-top: 1px
-    }
-
-    .sidebar-nav {
-      flex: 1;
-      padding: 16px 12px
-    }
-
-    .nav-group-label {
-      font-size: .62rem;
-      font-weight: 700;
-      color: rgba(255, 255, 255, .28);
-      text-transform: uppercase;
-      letter-spacing: 1.8px;
-      padding: 12px 10px 5px
-    }
-
-    .nav-link-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      color: rgba(255, 255, 255, .55);
-      text-decoration: none;
-      font-size: .855rem;
-      font-weight: 500;
-      margin-bottom: 2px;
-      transition: all .2s
-    }
-
-    .nav-link-item:hover {
-      background: rgba(255, 255, 255, .08);
-      color: rgba(255, 255, 255, .9)
-    }
-
-    .nav-link-item.active {
-      background: linear-gradient(135deg, rgba(201, 168, 76, .25), rgba(201, 168, 76, .1));
-      color: var(--emas-muda);
-      border: 1px solid rgba(201, 168, 76, .2)
-    }
-
-    .nav-link-item.active i,
-    .nav-link-item:hover i {
-      color: var(--emas)
-    }
-
-    .nav-link-item i {
-      font-size: .95rem;
-      width: 18px;
-      text-align: center;
-      flex-shrink: 0;
-      color: rgba(255, 255, 255, .4)
-    }
-
-    .nav-badge {
-      margin-left: auto;
-      background: #ef4444;
-      color: #fff;
-      font-size: .62rem;
-      font-weight: 700;
-      min-width: 18px;
-      height: 18px;
-      border-radius: 9px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 5px
-    }
-
-    .sidebar-footer {
-      padding: 12px;
-      border-top: 1px solid rgba(255, 255, 255, .07);
-      flex-shrink: 0
-    }
-
-    .admin-card {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, .05);
-      margin-bottom: 8px
-    }
-
-    .admin-ava {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--hijau-muda), var(--emas));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: .9rem;
-      color: #fff;
-      flex-shrink: 0
-    }
-
-    .admin-name {
-      font-size: .82rem;
-      font-weight: 600;
-      color: #fff
-    }
-
-    .admin-role {
-      font-size: .68rem;
-      color: rgba(255, 255, 255, .35)
-    }
-
-    .logout-link {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 9px 12px;
-      border-radius: 10px;
-      color: rgba(255, 255, 255, .45);
-      text-decoration: none;
-      font-size: .82rem;
-      transition: all .2s
-    }
-
-    .logout-link:hover {
-      background: rgba(239, 68, 68, .15);
-      color: #fca5a5
-    }
-
-    /* OVERLAY */
-    .sidebar-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, .5);
-      z-index: 199
-    }
-
-    .sidebar-overlay.show {
-      display: block
-    }
-
-    /* MAIN */
-    .main {
-      margin-left: var(--sidebar-w);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column
-    }
-
-    /* TOPBAR */
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: #fff;
-      padding: 0 28px;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #E8EDF2;
-      box-shadow: 0 1px 0 rgba(0, 0, 0, .04)
-    }
-
-    .hamburger {
-      display: none;
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: #f5f7fa;
-      border: none;
-      cursor: pointer;
-      align-items: center;
-      justify-content: center;
-      color: #555
-    }
-
-    .page-heading {
-      font-size: 1rem;
-      font-weight: 700;
-      color: #1a1a1a
-    }
-
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 10px
-    }
-
-    .topbar-date {
-      font-size: .78rem;
-      color: #94a3b8;
-      display: flex;
-      align-items: center;
-      gap: 5px
-    }
-
-    .icon-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: #f5f7fa;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #64748b;
-      text-decoration: none;
-      transition: all .2s;
-      position: relative
-    }
-
-    .icon-btn:hover {
-      background: #e8edf2;
-      color: #1a1a1a
-    }
-
-    .notif-dot {
-      position: absolute;
-      top: 7px;
-      right: 7px;
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #ef4444;
-      border: 1.5px solid #fff
-    }
-
-    /* CONTENT */
-    .content {
-      padding: 28px;
-      flex: 1
-    }
+    /* Sidebar, topbar, main, dan content sudah disediakan oleh inc/admin-style.php */
 
     /* GREETING */
     .greeting {
@@ -865,32 +575,6 @@ $adminRole = $_SESSION['admin_role'] ?? 'admin';
       }
     }
 
-    @media(max-width:900px) {
-      .sidebar {
-        transform: translateX(-100%)
-      }
-
-      .sidebar.open {
-        transform: translateX(0)
-      }
-
-      .main {
-        margin-left: 0
-      }
-
-      .hamburger {
-        display: flex
-      }
-
-      .topbar {
-        padding: 0 16px
-      }
-
-      .content {
-        padding: 16px
-      }
-    }
-
     @media(max-width:600px) {
       .stats-row {
         grid-template-columns: 1fr 1fr;
@@ -905,65 +589,10 @@ $adminRole = $_SESSION['admin_role'] ?? 'admin';
 </head>
 
 <body>
-
-  <div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
-
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-brand">
-      <div class="brand-icon"><i class="bi bi-moon-stars-fill"></i></div>
-      <div>
-        <div class="brand-name">SAH <span>Travel</span></div>
-        <div class="brand-sub">Panel Admin</div>
-      </div>
-    </div>
-    <nav class="sidebar-nav">
-      <div class="nav-group-label">Utama</div>
-      <a href="dashboard.php" class="nav-link-item active"><i class="bi bi-speedometer2"></i>Dashboard</a>
-      <a href="booking.php" class="nav-link-item">
-        <i class="bi bi-calendar-check"></i>Data Booking
-        <?php if (($stats['pending'] ?? 0) > 0): ?><span
-            class="nav-badge"><?= $stats['pending'] ?></span><?php endif; ?>
-      </a>
-      <a href="pembayaran.php" class="nav-link-item">
-        <i class="bi bi-credit-card"></i>Pembayaran
-        <?php if (($stats['bayar_pending'] ?? 0) > 0): ?><span
-            class="nav-badge"><?= $stats['bayar_pending'] ?></span><?php endif; ?>
-      </a>
-      <div class="nav-group-label">Konten</div>
-      <a href="paket.php" class="nav-link-item"><i class="bi bi-briefcase"></i>Paket Umrah</a>
-      <a href="jadwal.php" class="nav-link-item"><i class="bi bi-calendar3"></i>Jadwal</a>
-      <a href="testimoni.php" class="nav-link-item"><i class="bi bi-chat-quote"></i>Testimoni</a>
-      <div class="nav-group-label">Sistem</div>
-      <a href="pengaturan.php" class="nav-link-item"><i class="bi bi-gear"></i>Pengaturan</a>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="admin-card">
-        <div class="admin-ava"><?= strtoupper(substr($adminNama, 0, 1)) ?></div>
-        <div>
-          <div class="admin-name"><?= htmlspecialchars($adminNama) ?></div>
-          <div class="admin-role"><?= ucfirst($adminRole) ?></div>
-        </div>
-      </div>
-      <a href="logout.php" class="logout-link"><i class="bi bi-box-arrow-left"></i>Keluar</a>
-    </div>
-  </aside>
+  <?php include __DIR__ . '/inc/sidebar.php'; ?>
 
   <div class="main">
-    <div class="topbar">
-      <div style="display:flex;align-items:center;gap:14px">
-        <button class="hamburger" onclick="toggleSidebar()"><i class="bi bi-list" style="font-size:1.2rem"></i></button>
-        <div class="page-heading">Dashboard</div>
-      </div>
-      <div class="topbar-right">
-        <div class="topbar-date"><i class="bi bi-calendar3"></i><?= tglIndo(date('Y-m-d')) ?></div>
-        <a href="<?= BASE_URL ?>/index.php" target="_blank" class="icon-btn" title="Lihat website"><i
-            class="bi bi-box-arrow-up-right" style="font-size:.85rem"></i></a>
-        <a href="booking.php?status=pending" class="icon-btn" title="Notifikasi">
-          <i class="bi bi-bell" style="font-size:.9rem"></i>
-          <?php if (($stats['pending'] + $stats['bayar_pending']) > 0): ?><span class="notif-dot"></span><?php endif; ?>
-        </a>
-      </div>
-    </div>
+    <?php include __DIR__ . '/inc/topbar.php'; ?>
 
     <div class="content">
 
@@ -1192,17 +821,6 @@ $adminRole = $_SESSION['admin_role'] ?? 'admin';
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('open');
-      document.getElementById('overlay').classList.toggle('show');
-    }
-    function closeSidebar() {
-      document.getElementById('sidebar').classList.remove('open');
-      document.getElementById('overlay').classList.remove('show');
-    }
-    window.addEventListener('resize', () => { if (window.innerWidth > 900) closeSidebar(); });
-  </script>
 </body>
 
 </html>

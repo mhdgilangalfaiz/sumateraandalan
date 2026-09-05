@@ -91,24 +91,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
     }
 
-    // Generate kode booking
-    $tahun = date('Y');
-    $total_exists = (int) db()->fetchOne("SELECT COUNT(*) as total FROM booking WHERE YEAR(tanggal_booking) = ?", 'i', [$tahun])['total'];
-    $kodeBooking = 'SAH-' . $tahun . '-' . str_pad($total_exists + 1, 4, '0', STR_PAD_LEFT);
+    db()->beginTransaction();
+    try {
+      // Kunci baris paket & jadwal, lalu cek ulang kuota DI DALAM transaction.
+      // Ini yang mencegah race condition: selama transaction ini belum
+      // commit/rollback, request lain yang coba baca baris yang sama
+      // akan menunggu dulu, jadi tidak mungkin 2 orang lolos cek kuota
+      // untuk seat/kuota yang sama secara bersamaan.
+      $paketLocked = db()->fetchOne("SELECT sisa_kuota FROM paket_umrah WHERE id = ? FOR UPDATE", 'i', [$paketId]);
+      if (!$paketLocked || $paketLocked['sisa_kuota'] < $jQty) {
+        throw new Exception('Mohon maaf, kuota baru saja diambil pemesan lain. Silakan pilih paket/jadwal lain.');
+      }
+      if ($jId) {
+        $jadwalLocked = db()->fetchOne("SELECT kuota, terisi FROM jadwal WHERE id = ? FOR UPDATE", 'i', [$jId]);
+        if (!$jadwalLocked || ($jadwalLocked['kuota'] - $jadwalLocked['terisi']) < $jQty) {
+          throw new Exception('Mohon maaf, kuota jadwal ini baru saja diambil pemesan lain. Silakan pilih jadwal lain.');
+        }
+      }
 
-    $bookingId = db()->insert(
-      "INSERT INTO booking (kode_booking, nama_pemesan, email, telepon, alamat, paket_id, jadwal_id, jumlah_jamaah, harga_per_orang, total_harga, dp_amount, catatan, data_jamaah, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')",
-      'sssssiiidddss',
-      [$kodeBooking, $namaPemesan, $email, $telepon, $alamat, $paketId, $jId ?: null, $jQty, $finalHarga, $finalTotal, $finalDp, $catatan, json_encode($dataJamaah)]
-    );
+      // Generate kode booking
+      $tahun = date('Y');
+      $total_exists = (int) db()->fetchOne("SELECT COUNT(*) as total FROM booking WHERE YEAR(tanggal_booking) = ?", 'i', [$tahun])['total'];
+      $kodeBooking = 'SAH-' . $tahun . '-' . str_pad($total_exists + 1, 4, '0', STR_PAD_LEFT);
 
-    if ($bookingId) {
-      // Kurangi sisa kuota
+      $bookingId = db()->insert(
+        "INSERT INTO booking (kode_booking, nama_pemesan, email, telepon, alamat, paket_id, jadwal_id, jumlah_jamaah, harga_per_orang, total_harga, dp_amount, catatan, data_jamaah, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')",
+        'sssssiiidddss',
+        [$kodeBooking, $namaPemesan, $email, $telepon, $alamat, $paketId, $jId ?: null, $jQty, $finalHarga, $finalTotal, $finalDp, $catatan, json_encode($dataJamaah)]
+      );
+
+      if (!$bookingId) {
+        throw new Exception('Terjadi kesalahan sistem. Silakan coba lagi.');
+      }
+
+      // Kurangi sisa kuota — aman karena baris sudah dikunci di atas
       db()->execute("UPDATE paket_umrah SET sisa_kuota = sisa_kuota - ? WHERE id = ?", 'ii', [$jQty, $paketId]);
       if ($jId)
         db()->execute("UPDATE jadwal SET terisi = terisi + ? WHERE id = ?", 'ii', [$jQty, $jId]);
 
-      // Notifikasi admin
+      db()->commit();
+
+      // Notifikasi admin (di luar transaction, bukan hal kritis kalau gagal)
       db()->insert(
         "INSERT INTO notifikasi (judul, pesan, tipe, link) VALUES (?, ?, 'booking', ?)",
         'sss',
@@ -121,8 +144,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       // Redirect ke halaman sukses
       redirect(BASE_URL . '/pages/booking_sukses.php?kode=' . $kodeBooking);
-    } else {
-      $errors[] = 'Terjadi kesalahan sistem. Silakan coba lagi.';
+    } catch (Exception $e) {
+      db()->rollback();
+      $errors[] = $e->getMessage();
     }
   }
 }

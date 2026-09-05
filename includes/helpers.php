@@ -261,7 +261,13 @@ function statusBadge(string $status): string
         'rejected' => 'bg-danger',
         'verified' => 'bg-success',
         'nonaktif' => 'bg-secondary',
-        'baru' => 'bg-warning'
+        'baru' => 'bg-warning',
+        'dokumen_belum_lengkap' => 'bg-danger',
+        'dokumen_lengkap' => 'bg-info',
+        'menunggu_pembayaran' => 'bg-warning',
+        'submitted' => 'bg-primary',
+        'in_process' => 'bg-primary',
+        'perlu_revisi' => 'bg-warning'
     ];
     $labels = [
         'aktif' => 'Aktif',
@@ -278,7 +284,13 @@ function statusBadge(string $status): string
         'rejected' => 'Ditolak',
         'verified' => 'Terverifikasi',
         'nonaktif' => 'Nonaktif',
-        'baru' => 'Baru'
+        'baru' => 'Baru',
+        'dokumen_belum_lengkap' => 'Dokumen Belum Lengkap',
+        'dokumen_lengkap' => 'Dokumen Lengkap',
+        'menunggu_pembayaran' => 'Menunggu Pembayaran',
+        'submitted' => 'Terkirim ke Provider',
+        'in_process' => 'Sedang Diproses',
+        'perlu_revisi' => 'Perlu Revisi'
     ];
     $class = $badges[$status] ?? 'bg-secondary';
     $label = $labels[$status] ?? ucfirst($status);
