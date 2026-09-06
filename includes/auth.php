@@ -34,19 +34,6 @@ function cekAdmin(): void
 }
 
 /**
- * Halaman CRUD (paket, visa, tiket, booking, pembayaran, dst) hanya untuk
- * role 'admin'. Superadmin/HRD dialihkan ke halaman rekap — mereka
- * cuma boleh lihat, tidak CRUD.
- */
-function requireCrudAccess(): void
-{
-    requireAdmin();
-    if (($_SESSION['admin_role'] ?? '') === 'superadmin') {
-        redirect(BASE_URL . '/admin/rekap.php', 'Halaman ini hanya untuk admin operasional.', 'error');
-    }
-}
-
-/**
  * True jika admin yang login adalah superadmin (read-only).
  * Dipakai untuk sembunyikan tombol Tambah/Edit/Hapus di semua halaman,
  * bukan untuk memblokir akses halamannya.

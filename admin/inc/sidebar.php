@@ -34,21 +34,24 @@ function isActive(string $file): string
       <i class="bi bi-credit-card"></i> Pembayaran
       <?php if ($pendingBayar): ?><span class="nav-badge"><?= $pendingBayar ?></span><?php endif; ?>
     </a>
-    <div class="nav-group-label"><?= isSuperadmin() ? 'Laporan Konten' : 'Konten' ?></div>
+    <div class="nav-group-label"><?= isSuperadmin() ? 'Laporan Produk & Layanan' : 'Produk & Layanan' ?></div>
     <a href="<?= BASE_URL ?>/admin/paket.php" class="nav-link-item <?= isActive('paket.php') ?>">
       <i class="bi bi-briefcase"></i> Paket Umrah
     </a>
     <a href="<?= BASE_URL ?>/admin/jadwal.php" class="nav-link-item <?= isActive('jadwal.php') ?>">
       <i class="bi bi-calendar3"></i> Jadwal
     </a>
-    <a href="<?= BASE_URL ?>/admin/testimoni.php" class="nav-link-item <?= isActive('testimoni.php') ?>">
-      <i class="bi bi-chat-quote"></i> Testimoni
-      <?php if ($pendingTesti): ?><span class="nav-badge"><?= $pendingTesti ?></span><?php endif; ?>
+    <a href="<?= BASE_URL ?>/admin/tiket.php" class="nav-link-item <?= isActive('tiket.php') ?>">
+      <i class="bi bi-airplane"></i> Tiket Pesawat
     </a>
-    <div class="nav-group-label"><?= isSuperadmin() ? 'Laporan Layanan' : 'Layanan Tambahan' ?></div>
     <a href="<?= BASE_URL ?>/admin/visa.php" class="nav-link-item <?= isActive('visa.php') ?>">
       <i class="bi bi-file-earmark-text"></i> Visa Umrah
       <?php if ($pendingVisa): ?><span class="nav-badge"><?= $pendingVisa ?></span><?php endif; ?>
+    </a>
+    <div class="nav-group-label"><?= isSuperadmin() ? 'Laporan Konten' : 'Konten Website' ?></div>
+    <a href="<?= BASE_URL ?>/admin/testimoni.php" class="nav-link-item <?= isActive('testimoni.php') ?>">
+      <i class="bi bi-chat-quote"></i> Testimoni
+      <?php if ($pendingTesti): ?><span class="nav-badge"><?= $pendingTesti ?></span><?php endif; ?>
     </a>
     <div class="nav-group-label">Sistem</div>
     <a href="<?= BASE_URL ?>/admin/pengaturan.php" class="nav-link-item <?= isActive('pengaturan.php') ?>">

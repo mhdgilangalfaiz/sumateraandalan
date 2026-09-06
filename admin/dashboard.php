@@ -752,20 +752,8 @@ if (isSuperadmin()) {
                   <?= (int) ($rekapVisa['approved'] ?? 0) ?> disetujui ·
                   <?= (int) ($rekapVisa['rejected'] ?? 0) ?> ditolak
                 </div>
-                <a href="rekap.php" class="card-link" style="margin-top:8px">Lihat detail <i
+                <a href="visa.php" class="card-link" style="margin-top:8px">Lihat detail <i
                     class="bi bi-arrow-right"></i></a>
-              </div>
-
-              <!-- REKAP TIKET (belum ada modulnya) -->
-              <div class="stat-card blue" style="margin:0;opacity:.55">
-                <div class="stat-top">
-                  <div>
-                    <div class="stat-label">Tiket Pesawat</div>
-                    <div class="stat-num blue">–</div>
-                  </div>
-                  <div class="stat-icon blue"><i class="bi bi-airplane-fill"></i></div>
-                </div>
-                <div class="stat-sub">Modul belum tersedia</div>
               </div>
 
             </div>
