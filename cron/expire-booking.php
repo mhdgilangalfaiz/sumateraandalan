@@ -37,39 +37,24 @@ foreach ($expiredBookings as $b) {
 
     db()->beginTransaction();
     try {
-        // Ambil semua item tiket di booking ini, kunci baris tiket_pesawat
-        // terkait supaya aman dari proses lain yang mungkin sedang jalan
-        // bersamaan (misal admin sedang edit kuota manual).
-        $items = db()->fetchAll(
-            "SELECT referensi_id, jumlah FROM booking_items WHERE booking_id = ? AND jenis_item = 'tiket'",
-            'i',
-            [$bookingId]
-        );
+        // Ambil tiket terkait booking ini, kunci barisnya supaya aman dari
+        // proses lain yang mungkin sedang jalan bersamaan.
+        $booking = db()->fetchOne("SELECT tiket_id, jumlah_jamaah FROM booking WHERE id = ?", 'i', [$bookingId]);
 
-        foreach ($items as $item) {
+        if ($booking && $booking['tiket_id']) {
+            db()->execute("SELECT id FROM tiket_pesawat WHERE id = ? FOR UPDATE", 'i', [$booking['tiket_id']]);
+            // Lepas kembali seat yang tadinya sudah dianggap terisi, dan
+            // kembalikan status jadi 'aktif' kalau sebelumnya 'penuh'
             db()->execute(
-                "SELECT id FROM tiket_pesawat WHERE id = ? FOR UPDATE",
-                'i',
-                [$item['referensi_id']]
-            );
-            // Lepas kembali seat yang tadinya sudah dianggap terisi
-            db()->execute(
-                "UPDATE tiket_pesawat SET terisi = terisi - ? WHERE id = ?",
+                "UPDATE tiket_pesawat SET terisi = GREATEST(0, terisi - ?), status = IF(status = 'penuh', 'aktif', status) WHERE id = ?",
                 'ii',
-                [$item['jumlah'], $item['referensi_id']]
+                [$booking['jumlah_jamaah'], $booking['tiket_id']]
             );
         }
 
         // Batalkan booking-nya
         db()->execute(
             "UPDATE booking SET status = 'cancelled', catatan_admin = CONCAT(COALESCE(catatan_admin, ''), '\n[Sistem] Dibatalkan otomatis - deposit tidak diterima dalam 1x24 jam.') WHERE id = ?",
-            'i',
-            [$bookingId]
-        );
-
-        // Lepas juga seat_holds yang masih menggantung untuk booking ini (jaga-jaga)
-        db()->execute(
-            "UPDATE seat_holds SET status = 'released' WHERE booking_id = ? AND status = 'holding'",
             'i',
             [$bookingId]
         );

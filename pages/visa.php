@@ -291,8 +291,8 @@ $pesanMsg = "Assalamu'alaikum, saya ingin bertanya tentang layanan pengurusan vi
                     <li class="nav-item"><a class="nav-link" href="../index.php#faq">FAQ</a></li>
                     <li class="nav-item"><a class="nav-link" href="../index.php#kontak">Kontak</a></li>
                     <li class="nav-item ms-2">
-                        <a class="nav-link btn-navbar" href="login.php">
-                            <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                        <a class="nav-link btn-navbar" href="cek-booking.php">
+                            <i class="bi bi-search me-1"></i>Cek Booking
                         </a>
                     </li>
                 </ul>

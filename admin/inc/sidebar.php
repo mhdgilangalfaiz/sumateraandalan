@@ -38,9 +38,6 @@ function isActive(string $file): string
     <a href="<?= BASE_URL ?>/admin/paket.php" class="nav-link-item <?= isActive('paket.php') ?>">
       <i class="bi bi-briefcase"></i> Paket Umrah
     </a>
-    <a href="<?= BASE_URL ?>/admin/jadwal.php" class="nav-link-item <?= isActive('jadwal.php') ?>">
-      <i class="bi bi-calendar3"></i> Jadwal
-    </a>
     <a href="<?= BASE_URL ?>/admin/tiket.php" class="nav-link-item <?= isActive('tiket.php') ?>">
       <i class="bi bi-airplane"></i> Tiket Pesawat
     </a>

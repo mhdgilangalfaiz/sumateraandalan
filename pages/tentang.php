@@ -456,14 +456,25 @@ $izin_ppiu = $settings['izin_ppiu'] ?? '91201032614170001';
             </button>
             <div class="collapse navbar-collapse" id="navMenu">
                 <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
-                    <li class="nav-item"><a class="nav-link" href="../index.php">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="paket.php">Paket Umrah</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="tentang.php">Tentang Kami</a></li>
-                    <li class="nav-item"><a class="nav-link" href="kontak.php">Kontak</a></li>
-                    <li class="nav-item"><a class="nav-link" href="cek-booking.php">Cek Booking</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.php#beranda">Beranda</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="layananDropdown" role="button"
+                            data-bs-toggle="dropdown">Layanan Kami</a>
+                        <ul class="dropdown-menu" aria-labelledby="layananDropdown">
+                            <li><a class="dropdown-item" href="paket.php"><i
+                                        class="bi bi-suitcase-lg me-2"></i>Paket Umrah</a></li>
+                            <li><a class="dropdown-item" href="visa.php"><i
+                                        class="bi bi-file-earmark-text me-2"></i>Visa Umrah</a></li>
+                            <li><a class="dropdown-item" href="tiket.php"><i
+                                        class="bi bi-airplane me-2"></i>Tiket Pesawat</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="../index.php#testimoni">Testimoni</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.php#faq">FAQ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../index.php#kontak">Kontak</a></li>
                     <li class="nav-item ms-2">
-                        <a class="nav-link btn-navbar" href="paket.php">
-                            <i class="bi bi-calendar-check me-1"></i>Daftar Sekarang
+                        <a class="nav-link btn-navbar" href="cek-booking.php">
+                            <i class="bi bi-search me-1"></i>Cek Booking
                         </a>
                     </li>
                 </ul>

@@ -350,8 +350,8 @@ foreach (db()->fetchAll("SELECT nama_key, nilai FROM pengaturan") as $p)
                     <li class="nav-item"><a class="nav-link" href="../index.php#faq">FAQ</a></li>
                     <li class="nav-item"><a class="nav-link" href="../index.php#kontak">Kontak</a></li>
                     <li class="nav-item ms-2">
-                        <a class="nav-link btn-navbar" href="login.php">
-                            <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                        <a class="nav-link btn-navbar" href="cek-booking.php">
+                            <i class="bi bi-search me-1"></i>Cek Booking
                         </a>
                     </li>
                 </ul>
@@ -435,9 +435,9 @@ foreach (db()->fetchAll("SELECT nama_key, nilai FROM pengaturan") as $p)
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="harga-tiket">Rp <?= number_format($t['harga'], 0, ',', '.') ?></div>
-                                    <a href="<?= $habis ? '#' : waLink($pesanMsg) ?>"
-                                        class="btn-pesan <?= $habis ? 'disabled' : '' ?>" target="_blank">
-                                        <i class="bi bi-whatsapp"></i><?= $habis ? 'Habis' : 'Pesan' ?>
+                                    <a href="<?= $habis ? '#' : 'booking-tiket.php?id=' . $t['id'] ?>"
+                                        class="btn-pesan <?= $habis ? 'disabled' : '' ?>">
+                                        <i class="bi bi-ticket-perforated"></i><?= $habis ? 'Habis' : 'Pesan' ?>
                                     </a>
                                 </div>
                             </div>
