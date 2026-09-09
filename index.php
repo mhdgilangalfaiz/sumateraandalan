@@ -34,6 +34,7 @@ $slider_list = db()->fetchAll("SELECT * FROM slider WHERE status = 1 ORDER BY ur
         rel="stylesheet">
     <!-- AOS Animation -->
     <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <?php include __DIR__ . '/includes/navbar-style.php'; ?>
 
     <style>
         :root {
@@ -77,93 +78,7 @@ $slider_list = db()->fetchAll("SELECT * FROM slider WHERE status = 1 ORDER BY ur
             border-radius: 3px;
         }
 
-        /* ===== NAVBAR ===== */
-        .navbar {
-            background: transparent;
-            padding: 1.2rem 0;
-            transition: all 0.4s ease;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            opacity: 0;
-            transform: translateY(-100%);
-            pointer-events: none;
-        }
-
-        .navbar.scrolled {
-            background: rgba(27, 77, 46, 0.97);
-            backdrop-filter: blur(10px);
-            padding: 0.8rem 0;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-
-        .navbar-brand {
-            font-family: var(--font-display);
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: white !important;
-            letter-spacing: 0.5px;
-        }
-
-        .navbar-brand span {
-            color: var(--emas);
-        }
-
-        .navbar-brand {
-            display: flex;
-            align-items: center;
-        }
-
-        .navbar-logo {
-            height: 58px;
-            width: auto;
-            display: block;
-        }
-
-        @media (max-width: 991px) {
-            .navbar-logo {
-                height: 50px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .navbar-logo {
-                height: 42px;
-            }
-        }
-
-        .nav-link {
-            color: rgba(255, 255, 255, 0.9) !important;
-            font-weight: 500;
-            font-size: 0.9rem;
-            letter-spacing: 0.3px;
-            padding: 0.5rem 1rem !important;
-            transition: color 0.3s;
-        }
-
-        .nav-link:hover {
-            color: var(--emas) !important;
-        }
-
-        .btn-navbar {
-            background: var(--emas);
-            color: var(--hijau-tua) !important;
-            border-radius: 50px;
-            padding: 0.5rem 1.4rem !important;
-            font-weight: 600;
-            font-size: 0.85rem;
-            transition: all 0.3s;
-        }
-
-        .btn-navbar:hover {
-            background: var(--emas-muda);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 15px rgba(201, 168, 76, 0.4);
-        }
+        /* Navbar sekarang di includes/navbar-style.php */
 
         /* ===== HERO ===== */
         .hero-section {
@@ -1045,44 +960,7 @@ $slider_list = db()->fetchAll("SELECT * FROM slider WHERE status = 1 ORDER BY ur
 <body>
 
     <!-- ===== NAVBAR ===== -->
-    <nav class="navbar navbar-expand-lg" id="mainNav">
-        <div class="container">
-            <a class="navbar-brand" href="index.php">
-                <img src="<?= BASE_URL ?>/assets/img/logo-sah.png" alt="Logo SAH Umrah" class="navbar-logo me-2">
-                SAH <span>Umrah</span>
-            </a>
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-                <i class="bi bi-list text-white fs-4"></i>
-            </button>
-            <div class="collapse navbar-collapse" id="navMenu">
-                <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
-                    <li class="nav-item"><a class="nav-link" href="#beranda">Beranda</a></li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="layananDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Layanan Kami
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="layananDropdown">
-                            <li><a class="dropdown-item" href="pages/paket.php"><i
-                                        class="bi bi-suitcase-lg me-2"></i>Paket Umrah</a></li>
-                            <li><a class="dropdown-item" href="pages/visa.php"><i
-                                        class="bi bi-file-earmark-text me-2"></i>Visa Umrah</a></li>
-                            <li><a class="dropdown-item" href="pages/tiket.php"><i
-                                        class="bi bi-airplane me-2"></i>Tiket Pesawat</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="#testimoni">Testimoni</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#kontak">Kontak</a></li>
-                    <li class="nav-item ms-2">
-                        <a class="nav-link btn-navbar" href="pages/login.php">
-                            <i class="bi bi-box-arrow-in-right me-1"></i>Login
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <?php $navActive = ''; $navHideUntilScroll = true; include __DIR__ . '/includes/navbar.php'; ?>
 
     <!-- ===== HERO ===== -->
     <section class="hero-section" id="beranda">
@@ -1617,12 +1495,6 @@ $slider_list = db()->fetchAll("SELECT * FROM slider WHERE status = 1 ORDER BY ur
     <script>
         // Init AOS
         AOS.init({ once: true, offset: 60, duration: 300 });
-
-        // Navbar scroll
-        const nav = document.getElementById('mainNav');
-        window.addEventListener('scroll', () => {
-            nav.classList.toggle('scrolled', window.scrollY > 80);
-        });
 
         // Back to top
         const backTop = document.getElementById('backTop');

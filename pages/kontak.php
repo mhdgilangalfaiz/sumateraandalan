@@ -24,6 +24,7 @@ $email = $settings['email'] ?? 'info@sahtravel.com';
         href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap"
         rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <?php include __DIR__ . '/../includes/navbar-style.php'; ?>
     <style>
         :root {
             --hijau-tua: #1B4D2E;
@@ -52,71 +53,7 @@ $email = $settings['email'] ?? 'info@sahtravel.com';
             overflow-x: hidden
         }
 
-        .navbar {
-            background: rgba(27, 77, 46, 0.97);
-            backdrop-filter: blur(10px);
-            padding: .8rem 0;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, .2)
-        }
-
-        .navbar-brand {
-            font-family: var(--font-display);
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #fff !important;
-            display: flex;
-            align-items: center;
-        }
-
-        .navbar-brand span {
-            color: var(--emas)
-        }
-
-        .navbar-logo {
-            height: 58px;
-            width: auto;
-            display: block;
-        }
-
-        @media (max-width: 991px) {
-            .navbar-logo {
-                height: 50px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .navbar-logo {
-                height: 42px;
-            }
-        }
-
-        .nav-link {
-            color: rgba(255, 255, 255, .9) !important;
-            font-weight: 500;
-            font-size: .9rem;
-            padding: .5rem 1rem !important;
-            transition: color .3s
-        }
-
-        .btn-navbar {
-            background: var(--emas);
-            color: var(--hijau-tua) !important;
-            border-radius: 50px;
-            padding: .5rem 1.4rem !important;
-            font-weight: 600;
-            font-size: .85rem;
-            transition: all .3s
-        }
-
-        .btn-navbar:hover {
-            background: var(--emas-muda);
-            transform: translateY(-1px)
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            color: var(--emas) !important
-        }
+        /* Navbar sekarang di includes/navbar-style.php */
 
         .page-hero {
             background: linear-gradient(135deg, #0D2B1A, #1B4D2E 50%, #1B6B3A);
@@ -127,7 +64,13 @@ $email = $settings['email'] ?? 'info@sahtravel.com';
 
         @media (max-width: 767px) {
             .page-hero {
-                padding: 70px 0 30px
+                padding: 100px 0 30px
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-hero {
+                padding: 90px 0 20px
             }
         }
 
@@ -409,41 +352,7 @@ $email = $settings['email'] ?? 'info@sahtravel.com';
 
 <body>
 
-    <nav class="navbar navbar-expand-lg sticky-top" id="mainNav">
-        <div class="container">
-            <a class="navbar-brand" href="../index.php"><img src="<?= BASE_URL ?>/assets/img/logo-sah.png"
-                    alt="Logo SAH Umrah" class="navbar-logo me-2">SAH
-                <span>Umrah</span></a>
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-                <i class="bi bi-list text-white fs-4"></i>
-            </button>
-            <div class="collapse navbar-collapse" id="navMenu">
-                <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
-                    <li class="nav-item"><a class="nav-link" href="../index.php#beranda">Beranda</a></li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="layananDropdown" role="button"
-                            data-bs-toggle="dropdown">Layanan Kami</a>
-                        <ul class="dropdown-menu" aria-labelledby="layananDropdown">
-                            <li><a class="dropdown-item" href="paket.php"><i
-                                        class="bi bi-suitcase-lg me-2"></i>Paket Umrah</a></li>
-                            <li><a class="dropdown-item" href="visa.php"><i
-                                        class="bi bi-file-earmark-text me-2"></i>Visa Umrah</a></li>
-                            <li><a class="dropdown-item" href="tiket.php"><i
-                                        class="bi bi-airplane me-2"></i>Tiket Pesawat</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="../index.php#testimoni">Testimoni</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../index.php#faq">FAQ</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="../index.php#kontak">Kontak</a></li>
-                    <li class="nav-item ms-2">
-                        <a class="nav-link btn-navbar" href="cek-booking.php">
-                            <i class="bi bi-search me-1"></i>Cek Booking
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <?php $navActive = 'kontak'; include __DIR__ . '/../includes/navbar.php'; ?>
 
     <section class="page-hero">
         <div class="container">
