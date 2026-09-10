@@ -47,12 +47,25 @@ $navHideUntilScroll = $navHideUntilScroll ?? false; // true = navbar disembunyik
                     <a class="nav-link <?= $navActive === 'kontak' ? 'active' : '' ?>"
                         href="<?= BASE_URL ?>/index.php#kontak">Kontak</a>
                 </li>
-                <li class="nav-item ms-2">
-                    <a class="nav-link btn-navbar <?= $navActive === 'cekbooking' ? 'active' : '' ?>"
+                <li class="nav-item">
+                    <a class="nav-link <?= $navActive === 'cekbooking' ? 'active' : '' ?>"
                         href="<?= BASE_URL ?>/pages/cek-booking.php">
                         <i class="bi bi-search me-1"></i>Cek Booking
                     </a>
                 </li>
+                <?php if (isUserLoggedIn()): ?>
+                    <li class="nav-item ms-2">
+                        <a class="nav-link btn-navbar" href="<?= BASE_URL ?>/user/dashboard.php">
+                            <i class="bi bi-person-circle me-1"></i><?= htmlspecialchars(explode(' ', $_SESSION['user_nama'])[0]) ?>
+                        </a>
+                    </li>
+                <?php else: ?>
+                    <li class="nav-item ms-2">
+                        <a class="nav-link btn-navbar" href="<?= BASE_URL ?>/user/login.php">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                        </a>
+                    </li>
+                <?php endif; ?>
             </ul>
         </div>
     </div>

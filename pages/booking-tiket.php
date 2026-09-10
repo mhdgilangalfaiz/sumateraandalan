@@ -104,6 +104,7 @@ foreach (db()->fetchAll("SELECT nama_key, nilai FROM pengaturan") as $p)
     <link
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap"
         rel="stylesheet">
+    <?php include __DIR__ . '/../includes/navbar-style.php'; ?>
     <style>
         :root {
             --hijau-tua: #1B4D2E;
@@ -127,21 +128,22 @@ foreach (db()->fetchAll("SELECT nama_key, nilai FROM pengaturan") as $p)
             color: var(--teks-gelap)
         }
 
-        .navbar-brand {
-            font-family: var(--font-display);
-            font-weight: 700;
-            font-size: 1.3rem;
-            color: var(--hijau-tua) !important
+        /* Navbar sekarang di includes/navbar-style.php */
+
+        .page-content-offset {
+            padding-top: 130px
         }
 
-        .navbar-brand span {
-            color: var(--emas)
+        @media (max-width: 767px) {
+            .page-content-offset {
+                padding-top: 100px
+            }
         }
 
-        .navbar {
-            background: #fff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
-            padding: .9rem 0
+        @media (max-width: 480px) {
+            .page-content-offset {
+                padding-top: 90px
+            }
         }
 
         .ringkasan-card {
@@ -228,16 +230,11 @@ foreach (db()->fetchAll("SELECT nama_key, nilai FROM pengaturan") as $p)
 </head>
 
 <body>
-    <nav class="navbar">
-        <div class="container">
-            <a class="navbar-brand" href="../index.php"><i class="bi bi-moon-stars-fill me-2"
-                    style="color:var(--emas)"></i>SAH <span>Umrah</span></a>
-            <a href="tiket.php" class="btn btn-outline-secondary btn-sm rounded-pill"><i
-                    class="bi bi-arrow-left me-1"></i>Kembali</a>
-        </div>
-    </nav>
+    <?php $navActive = 'tiket'; include __DIR__ . '/../includes/navbar.php'; ?>
 
-    <div class="container py-5">
+    <div class="container py-5 page-content-offset">
+        <a href="tiket.php" class="btn btn-outline-secondary btn-sm rounded-pill mb-3"><i
+                class="bi bi-arrow-left me-1"></i>Kembali</a>
         <?php if (!empty($errors)): ?>
             <div class="alert alert-danger">
                 <?php foreach ($errors as $e): ?><div><?= htmlspecialchars($e) ?></div><?php endforeach; ?>

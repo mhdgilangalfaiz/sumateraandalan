@@ -73,7 +73,7 @@ function isActive(string $file): string
         <?php endif; ?>
       </div>
     </div>
-    <a href="<?= BASE_URL ?>/admin/logout.php" class="logout-link">
+    <a href="<?= BASE_URL ?>/user/logout.php" class="logout-link">
       <i class="bi bi-box-arrow-left"></i> Keluar
     </a>  
   </div>

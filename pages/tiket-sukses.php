@@ -108,11 +108,45 @@ $sisaJam = max(0, round((strtotime($booking['batas_deposit']) - time()) / 3600, 
             color: #fff;
             opacity: .9
         }
+
+        /* Navbar minimalis (logo saja) — sama seperti pola di booking_sukses.php */
+        .navbar {
+            background: rgba(27, 77, 46, .97);
+            padding: .8rem 0
+        }
+
+        .navbar-brand {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff !important;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand span {
+            color: var(--emas)
+        }
+
+        .navbar-logo {
+            height: 42px;
+            width: auto;
+            display: block;
+        }
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <nav class="navbar">
+        <div class="container">
+            <a class="navbar-brand" href="../index.php">
+                <img src="<?= BASE_URL ?>/assets/img/logo-sah.png" alt="Logo SAH Umrah" class="navbar-logo me-2">SAH
+                <span>Umrah</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="container py-5">
         <div class="sukses-card text-center">
             <i class="bi bi-check-circle-fill" style="font-size:3rem;color:var(--hijau)"></i>
             <h3 class="mt-3" style="font-family:var(--font-display);color:var(--hijau-tua)">Booking Berhasil Dibuat

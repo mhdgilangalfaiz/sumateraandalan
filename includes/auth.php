@@ -23,7 +23,7 @@ function isAdminLoggedIn(): bool
 function requireAdmin(): void
 {
     if (!isAdminLoggedIn()) {
-        redirect(BASE_URL . '/admin/login.php');
+        redirect(BASE_URL . '/user/login.php');
     }
 }
 
@@ -68,6 +68,45 @@ function requireSuperadminOnly(): void
     if (!isSuperadmin()) {
         redirect(BASE_URL . '/admin/dashboard.php', 'Halaman ini hanya untuk Superadmin.', 'error');
     }
+}
+
+/* ============================================================
+ * AUTH UNTUK CUSTOMER/AGEN (tabel `users`) — session key sengaja
+ * dibedakan dari session admin ($_SESSION['user_id'] vs
+ * $_SESSION['admin_id']) supaya tidak saling tabrakan/ketimpa.
+ * ============================================================ */
+
+function isUserLoggedIn(): bool
+{
+    return !empty($_SESSION['user_id']);
+}
+
+function requireUserLogin(): void
+{
+    if (!isUserLoggedIn()) {
+        $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'] ?? '';
+        redirect(BASE_URL . '/user/login.php');
+    }
+}
+
+function loginUser(array $user): void
+{
+    $_SESSION['user_id'] = $user['id'];
+    $_SESSION['user_nama'] = $user['nama_lengkap'];
+    $_SESSION['user_email'] = $user['email'];
+    db()->execute("UPDATE users SET last_login = NOW() WHERE id = ?", 'i', [$user['id']]);
+}
+
+function logoutUser(): void
+{
+    unset($_SESSION['user_id'], $_SESSION['user_nama'], $_SESSION['user_email']);
+}
+
+function currentUser(): array|null
+{
+    if (!isUserLoggedIn())
+        return null;
+    return db()->fetchOne("SELECT * FROM users WHERE id = ?", 'i', [$_SESSION['user_id']]);
 }
 
 /**

@@ -960,6 +960,7 @@ $slider_list = db()->fetchAll("SELECT * FROM slider WHERE status = 1 ORDER BY ur
 <body>
 
     <!-- ===== NAVBAR ===== -->
+    <!-- ===== NAVBAR ===== -->
     <?php $navActive = ''; $navHideUntilScroll = true; include __DIR__ . '/includes/navbar.php'; ?>
 
     <!-- ===== HERO ===== -->

@@ -6,5 +6,5 @@ require_once __DIR__ . '/../config/config.php';
 if (isAdminLoggedIn()) {
     redirect(BASE_URL . '/admin/dashboard.php');
 } else {
-    redirect(BASE_URL . '/admin/login.php');
+    redirect(BASE_URL . '/user/login.php');
 }
