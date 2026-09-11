@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2.5rem 2rem;
+            padding: 2rem 2rem;
         }
 
         .form-box {
@@ -130,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .form-sub {
             color: #888;
             font-size: .88rem;
-            margin-bottom: 1.8rem;
+            margin-bottom: 1.3rem;
             line-height: 1.5;
         }
 
@@ -141,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .field {
-            margin-bottom: .9rem;
+            margin-bottom: .75rem;
         }
 
         .form-label {
@@ -406,6 +406,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .brand-quote-text i {
             color: var(--emas);
             opacity: .5;
+        }
+
+        /* Desktop: kunci ukuran halaman supaya sama seperti Login (pas 1
+           layar, tidak scroll). Tablet & mobile tetap boleh scroll karena
+           panel-nya ditumpuk vertikal. */
+        @media (min-width: 992px) {
+
+            html,
+            body {
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            .page-wrap {
+                height: 100vh;
+            }
+
+            .brand-panel,
+            .form-panel {
+                height: 100%;
+                overflow-y: auto;
+            }
         }
 
         /* ======================================================

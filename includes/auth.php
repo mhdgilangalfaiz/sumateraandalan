@@ -2,10 +2,16 @@
 // ============================================================
 // includes/auth.php — FIXED VERSION
 // ============================================================
-// CATATAN: Sistem akun untuk user/jamaah sudah dihapus.
-// Booking sekarang sepenuhnya guest-checkout (tanpa login),
-// status booking dicek lewat pages/cek-booking.php.
-// Fungsi login di sini HANYA untuk admin.
+// CATATAN: Ada 2 jenis akun — admin/superadmin (tabel `admins`) dan
+// customer/jamaah (tabel `users`). Booking tetap bisa dilakukan sebagai
+// guest (tanpa login) dan dicek lewat pages/cek-booking.php, TAPI customer
+// juga bisa punya akun untuk login dan melihat riwayat booking mereka
+// lewat user/dashboard.php (lihat loginUser/requireUserLogin/currentUser
+// di bawah).
+// Login & logout untuk KEDUA peran sudah terpusat di satu file:
+// user/login.php dan user/logout.php. Jangan buat admin/login.php atau
+// admin/logout.php lagi — role ditentukan otomatis lewat isAdminLoggedIn()
+// vs isUserLoggedIn().
 // isAdminLoggedIn() HANYA didefinisikan di sini,
 // tidak boleh didefinisikan lagi di config.php
 
