@@ -47,17 +47,34 @@ $navHideUntilScroll = $navHideUntilScroll ?? false; // true = navbar disembunyik
                     <a class="nav-link <?= $navActive === 'kontak' ? 'active' : '' ?>"
                         href="<?= BASE_URL ?>/index.php#kontak">Kontak</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= $navActive === 'cekbooking' ? 'active' : '' ?>"
-                        href="<?= BASE_URL ?>/pages/cek-booking.php">
-                        <i class="bi bi-search me-1"></i>Cek Booking
-                    </a>
-                </li>
+                <?php if (!isUserLoggedIn()): ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $navActive === 'cekbooking' ? 'active' : '' ?>"
+                            href="<?= BASE_URL ?>/pages/cek-booking.php">
+                            <i class="bi bi-search me-1"></i>Cek Booking
+                        </a>
+                    </li>
+                <?php endif; ?>
                 <?php if (isUserLoggedIn()): ?>
-                    <li class="nav-item ms-2">
-                        <a class="nav-link btn-navbar" href="<?= BASE_URL ?>/user/dashboard.php">
+                    <li class="nav-item dropdown ms-2">
+                        <a class="nav-link dropdown-toggle btn-navbar" href="#" id="userDropdown" role="button"
+                            data-bs-toggle="dropdown">
                             <i class="bi bi-person-circle me-1"></i><?= htmlspecialchars(explode(' ', $_SESSION['user_nama'])[0]) ?>
                         </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="<?= BASE_URL ?>/user/profil.php">
+                                    <i class="bi bi-person me-2"></i>Profil Saya
+                                </a></li>
+                            <li><a class="dropdown-item" href="<?= BASE_URL ?>/user/dashboard.php">
+                                    <i class="bi bi-receipt me-2"></i>Riwayat Pesanan
+                                </a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item text-danger" href="<?= BASE_URL ?>/user/logout.php">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Keluar
+                                </a></li>
+                        </ul>
                     </li>
                 <?php else: ?>
                     <li class="nav-item ms-2">

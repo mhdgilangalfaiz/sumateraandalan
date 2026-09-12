@@ -71,6 +71,7 @@ $bookings = db()->fetchAll(
     <link
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap"
         rel="stylesheet">
+    <?php include __DIR__ . '/../includes/navbar-style.php'; ?>
     <style>
         :root {
             --hijau-tua: #1B4D2E;
@@ -87,26 +88,71 @@ $bookings = db()->fetchAll(
             min-height: 100vh
         }
 
+        /* Halaman ini tidak punya hero image gelap di bawah navbar, jadi
+           navbar dipaksa solid dari awal (bukan transparan-lalu-scroll)
+           supaya teksnya tetap kebaca di atas background krem. */
         .navbar {
-            background: #fff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
-            padding: .9rem 0
+            background: rgba(27, 77, 46, .97) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, .15);
         }
 
-        .navbar-brand {
-            font-family: var(--font-display);
-            font-weight: 700;
-            color: var(--hijau-tua) !important
+        .container.py-5 {
+            padding-top: 6.5rem !important
         }
 
-        .navbar-brand span {
-            color: var(--emas)
+        @media (max-width: 991px) {
+            .container.py-5 {
+                padding-top: 5.5rem !important
+            }
         }
 
         .page-title {
             font-family: var(--font-display);
             font-weight: 700;
             color: var(--hijau-tua)
+        }
+
+        .welcome-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 1.6rem
+        }
+
+        .welcome-sub {
+            font-size: .85rem;
+            color: #6B6B6B;
+            margin-top: 2px
+        }
+
+        .btn-cari-layanan {
+            background: var(--hijau);
+            color: #fff;
+            border-radius: 50px;
+            font-size: .82rem;
+            font-weight: 600;
+            padding: 9px 20px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap
+        }
+
+        .btn-cari-layanan:hover {
+            background: var(--hijau-tua);
+            color: #fff
+        }
+
+        .empty-state {
+            background: #fff;
+            border: 1px dashed #e5ddc8;
+            border-radius: 18px;
+            padding: 3.2rem 1.5rem;
+            text-align: center
         }
 
         .order-card {
@@ -203,19 +249,19 @@ $bookings = db()->fetchAll(
 </head>
 
 <body>
-    <nav class="navbar">
-        <div class="container d-flex justify-content-between align-items-center">
-            <a class="navbar-brand" href="../index.php"><i class="bi bi-moon-stars-fill me-2"
-                    style="color:var(--emas)"></i>SAH <span>Umrah</span></a>
-            <div style="font-size:.85rem">
-                Halo, <strong><?= htmlspecialchars(explode(' ', $user['nama_lengkap'])[0]) ?></strong>
-                · <a href="logout.php" style="color:#dc2626">Keluar</a>
-            </div>
-        </div>
-    </nav>
+    <?php $navActive = ''; include __DIR__ . '/../includes/navbar.php'; ?>
 
     <div class="container py-5">
-        <h4 class="page-title mb-3">Riwayat Pesanan Saya</h4>
+        <div class="welcome-bar">
+            <div>
+                <h4 class="page-title mb-0">Riwayat Pesanan Saya</h4>
+                <div class="welcome-sub">Halo, <?= htmlspecialchars(explode(' ', $user['nama_lengkap'])[0]) ?> — semua
+                    pesanan Anda ada di sini.</div>
+            </div>
+            <a href="<?= BASE_URL ?>/pages/paket.php" class="btn-cari-layanan">
+                <i class="bi bi-search"></i> Cari Layanan Baru
+            </a>
+        </div>
 
         <details class="claim-card">
             <summary><i class="bi bi-link-45deg me-1"></i>Punya booking lama sebelum punya akun? Klaim di sini</summary>
@@ -241,10 +287,14 @@ $bookings = db()->fetchAll(
         </details>
 
         <?php if (empty($bookings)): ?>
-            <div class="text-center py-5">
-                <i class="bi bi-inbox" style="font-size:2.5rem;color:#d1d5db"></i>
-                <p class="mt-3" style="color:#6B6B6B">Belum ada pesanan.</p>
-                <a href="../index.php#beranda" style="color:var(--hijau)">Lihat layanan kami</a>
+            <div class="empty-state">
+                <i class="bi bi-inbox" style="font-size:2.8rem;color:#d1c7a3"></i>
+                <p class="mt-3 mb-1" style="color:#444;font-weight:600">Belum ada pesanan</p>
+                <p style="color:#94a3b8;font-size:.85rem;margin-bottom:1.4rem">Yuk mulai rencanakan perjalanan ibadah
+                    Anda bersama kami.</p>
+                <a href="<?= BASE_URL ?>/pages/paket.php" class="btn-aksi" style="margin-top:0">
+                    <i class="bi bi-suitcase-lg me-1"></i>Lihat Paket Umrah
+                </a>
             </div>
         <?php else: ?>
             <?php foreach ($bookings as $b):
@@ -307,6 +357,7 @@ $bookings = db()->fetchAll(
             <?php endforeach; ?>
         <?php endif; ?>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
